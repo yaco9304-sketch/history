@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="baekje-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E3A5F"/>
+      <stop offset="50%" style="stop-color:#2E5A8F"/>
+      <stop offset="100%" style="stop-color:#1E3A5F"/>
+    </linearGradient>
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="50%" style="stop-color:#FFA500"/>
+      <stop offset="100%" style="stop-color:#FFD700"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- 배경 원 -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="url(#baekje-grad)" stroke-width="3"/>
+  
+  <!-- 백제 금동대향로 스타일 -->
+  <g transform="translate(100,105)">
+    <!-- 향로 받침 -->
+    <ellipse cx="0" cy="50" rx="25" ry="8" fill="#8B7355"/>
+    <path d="M -20,50 L -15,35 L 15,35 L 20,50 Z" fill="url(#gold-grad)"/>
+    
+    <!-- 향로 몸통 -->
+    <ellipse cx="0" cy="30" rx="30" ry="15" fill="url(#gold-grad)"/>
+    <ellipse cx="0" cy="20" rx="35" ry="20" fill="url(#gold-grad)"/>
+    
+    <!-- 연꽃 무늬 -->
+    <g fill="#1E3A5F" opacity="0.6">
+      <ellipse cx="-25" cy="20" rx="8" ry="4" transform="rotate(-30 -25 20)"/>
+      <ellipse cx="25" cy="20" rx="8" ry="4" transform="rotate(30 25 20)"/>
+      <ellipse cx="-30" cy="10" rx="6" ry="3" transform="rotate(-20 -30 10)"/>
+      <ellipse cx="30" cy="10" rx="6" ry="3" transform="rotate(20 30 10)"/>
+    </g>
+    
+    <!-- 향로 뚜껑 (산 모양) -->
+    <path d="M -30,0 Q -20,-20 -10,-15 Q 0,-40 10,-15 Q 20,-20 30,0 Z" fill="url(#gold-grad)"/>
+    
+    <!-- 봉황 장식 -->
+    <g transform="translate(0,-45)">
+      <ellipse cx="0" cy="0" rx="8" ry="6" fill="url(#gold-grad)"/>
+      <circle cx="5" cy="-3" r="4" fill="url(#gold-grad)"/>
+      <path d="M 8,-3 L 15,-5 L 8,-1 Z" fill="#FF6B00"/>
+      <path d="M -5,0 Q -15,-10 -20,-5 Q -10,0 -5,5 Z" fill="url(#gold-grad)"/>
+      <path d="M -3,5 Q -10,15 -5,20 Q 0,10 5,5 Z" fill="url(#gold-grad)"/>
+    </g>
+  </g>
+  
+  <!-- 물결 무늬 (해상왕국) -->
+  <g stroke="#4A90D9" stroke-width="1.5" fill="none" opacity="0.5">
+    <path d="M 20,170 Q 40,160 60,170 Q 80,180 100,170 Q 120,160 140,170 Q 160,180 180,170"/>
+    <path d="M 20,180 Q 40,170 60,180 Q 80,190 100,180 Q 120,170 140,180 Q 160,190 180,180"/>
+  </g>
+  
+  <!-- 장식 테두리 -->
+  <circle cx="100" cy="100" r="88" fill="none" stroke="#4A90D9" stroke-width="1" stroke-dasharray="5,5"/>
+</svg>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

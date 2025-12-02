@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="silla-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#B8860B"/>
+      <stop offset="50%" style="stop-color:#DAA520"/>
+      <stop offset="100%" style="stop-color:#B8860B"/>
+    </linearGradient>
+    <linearGradient id="crown-gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="30%" style="stop-color:#FFA500"/>
+      <stop offset="70%" style="stop-color:#FFD700"/>
+      <stop offset="100%" style="stop-color:#B8860B"/>
+    </linearGradient>
+    <filter id="gold-glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- 배경 원 -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="url(#silla-grad)" stroke-width="3"/>
+  
+  <!-- 신라 금관 -->
+  <g transform="translate(100,110)" filter="url(#gold-glow)">
+    <!-- 금관 밴드 -->
+    <path d="M -45,20 Q -50,30 -40,35 L 40,35 Q 50,30 45,20 L 45,10 Q 40,5 35,10 L -35,10 Q -40,5 -45,10 Z" fill="url(#crown-gold)"/>
+    
+    <!-- 나뭇가지 장식 (출) - 중앙 -->
+    <g stroke="url(#crown-gold)" stroke-width="3" fill="none">
+      <path d="M 0,10 L 0,-50"/>
+      <path d="M 0,-20 L -12,-35 M 0,-20 L 12,-35"/>
+      <path d="M 0,-35 L -10,-48 M 0,-35 L 10,-48"/>
+      <path d="M 0,-45 L -8,-55 M 0,-45 L 8,-55"/>
+    </g>
+    
+    <!-- 나뭇가지 장식 - 좌측 -->
+    <g stroke="url(#crown-gold)" stroke-width="2.5" fill="none" transform="translate(-25,5)">
+      <path d="M 0,5 L 0,-35"/>
+      <path d="M 0,-10 L -8,-22 M 0,-10 L 8,-22"/>
+      <path d="M 0,-22 L -6,-32 M 0,-22 L 6,-32"/>
+    </g>
+    
+    <!-- 나뭇가지 장식 - 우측 -->
+    <g stroke="url(#crown-gold)" stroke-width="2.5" fill="none" transform="translate(25,5)">
+      <path d="M 0,5 L 0,-35"/>
+      <path d="M 0,-10 L -8,-22 M 0,-10 L 8,-22"/>
+      <path d="M 0,-22 L -6,-32 M 0,-22 L 6,-32"/>
+    </g>
+    
+    <!-- 곡옥 장식들 -->
+    <g fill="#40E0D0">
+      <circle cx="-12" cy="-48" r="4"/>
+      <circle cx="12" cy="-48" r="4"/>
+      <circle cx="0" cy="-58" r="5"/>
+      <circle cx="-8" cy="-32" r="3"/>
+      <circle cx="8" cy="-32" r="3"/>
+      <!-- 좌우 곡옥 -->
+      <circle cx="-33" cy="-30" r="3"/>
+      <circle cx="33" cy="-30" r="3"/>
+      <circle cx="-31" cy="-20" r="2.5"/>
+      <circle cx="31" cy="-20" r="2.5"/>
+    </g>
+    
+    <!-- 금 구슬 장식 -->
+    <g fill="#FFD700">
+      <circle cx="-40" cy="25" r="3"/>
+      <circle cx="-30" cy="28" r="2.5"/>
+      <circle cx="40" cy="25" r="3"/>
+      <circle cx="30" cy="28" r="2.5"/>
+    </g>
+  </g>
+  
+  <!-- 별 무늬 (첨성대 - 천문) -->
+  <g fill="#FFD700" opacity="0.4">
+    <circle cx="30" cy="40" r="2"/>
+    <circle cx="170" cy="50" r="2"/>
+    <circle cx="25" cy="160" r="1.5"/>
+    <circle cx="175" cy="155" r="1.5"/>
+    <circle cx="50" cy="30" r="1"/>
+    <circle cx="150" cy="35" r="1"/>
+  </g>
+  
+  <!-- 장식 테두리 -->
+  <circle cx="100" cy="100" r="88" fill="none" stroke="#DAA520" stroke-width="1" stroke-dasharray="5,5"/>
+</svg>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

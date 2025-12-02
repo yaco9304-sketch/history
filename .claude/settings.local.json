@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run build)",
+      "Bash(npm run dev:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(node test-single-player.js:*)",
+      "Bash(npm start)",
+      "Bash(node test-baekje-events.js:*)",
+      "Bash(curl:*)",
+      "Bash(rm:*)",
+      "Bash(node generate-events.js:*)",
+      "Bash(node generate-events.mjs:*)",
+      "Bash(node:*)",
+      "Bash(open http://localhost:5175)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\n채팅 기능 수정 완료\n\n- ChatPanel z-index 증가 및 AnimatePresence 추가\n- 서버에서 메시지 발신자에게도 chatMessage 전송\n- 팀/외교/공개 채팅 모두 정상 작동\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
