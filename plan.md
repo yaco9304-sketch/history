@@ -1,927 +1,1890 @@
-# 역사전쟁:삼국시대 - 개발 계획서
+# 역사전쟁: 삼국시대 - 추가 개발 계획
 
-> 역사 교육용 실시간 멀티플레이 전략 웹게임
-
----
+> 디지털교육연구대회 교육용 SW·AI 분과 출품을 위한 상세 개발 계획
 
 ## 📋 목차
-
-1. [프로젝트 개요](#1-프로젝트-개요)
-2. [기술 스택](#2-기술-스택)
-3. [개발 단계별 계획](#3-개발-단계별-계획)
-4. [MVP 기능 정의](#4-mvp-기능-정의)
-5. [데이터 구조](#5-데이터-구조)
-6. [API 설계](#6-api-설계)
-7. [화면 구성](#7-화면-구성)
-8. [폴더 구조](#8-폴더-구조)
-9. [무료 리소스 활용](#9-무료-리소스-활용)
-10. [위험 관리](#10-위험-관리)
+1. [개발 목표](#개발-목표)
+2. [현재 상태 분석](#현재-상태-분석)
+3. [**Phase 0: 게임 기능 강화 (1주)**](#phase-0-게임-기능-강화-1주) ⭐ NEW
+4. [Phase 1: 출품 필수 기능 (2주)](#phase-1-출품-필수-기능-2주)
+5. [Phase 2: 경쟁력 강화 기능 (4주)](#phase-2-경쟁력-강화-기능-4주)
+6. [Phase 3: 차별화 기능 (8주)](#phase-3-차별화-기능-8주)
+7. [기술 스택 및 아키텍처](#기술-스택-및-아키텍처)
+8. [일정 및 마일스톤](#일정-및-마일스톤)
 
 ---
 
-## 1. 프로젝트 개요
+## 개발 목표
 
-### 1.1 핵심 목표
-- **대상**: 초등 5-6학년 / 중등 1학년 역사 수업
-- **인원**: 12-15명 (3팀, 팀당 4-5명)
-- **시간**: 40분 수업 1회분
-- **형태**: 웹 브라우저 기반 (PC/태블릿)
+### 최종 목표
+디지털교육연구대회 교육용 SW·AI 분과에서 **최우수상** 수상을 위한 교육적 가치와 기술력을 갖춘 게임 기반 학습 플랫폼 완성
 
-### 1.2 핵심 기능 (MVP)
-1. ✅ 방 생성 및 팀 구성 (고구려/백제/신라)
-2. ✅ 턴 기반 게임 진행
-3. ✅ 역사 이벤트 선택 시스템
-4. ✅ 실시간 팀 투표
-5. ✅ 국력 스탯 관리
-6. ✅ 간단한 외교 (채팅, 동맹)
-7. ✅ 승리 조건 판정
-
-### 1.3 확장 기능 (시간 여유 시)
-- 🔲 교사 대시보드
-- 🔲 AI 조언자
-- 🔲 전투 시스템
-- 🔲 도전과제
-- 🔲 게임 리플레이
+### 핵심 가치
+1. **교육과정 연계**: 2015/2022 개정 교육과정 역사 교과 성취기준 달성
+2. **학습 효과 측정**: 데이터 기반 학습 분석 및 리포트 제공
+3. **교사 지원**: 수업 운영 및 평가에 실질적으로 도움이 되는 도구
+4. **학생 참여**: 게임 기반 학습으로 높은 몰입도와 동기 부여
 
 ---
 
-## 2. 기술 스택
+## 현재 상태 분석
 
-### 2.1 프론트엔드
-```
-- React 18 + TypeScript
-- Vite (빌드 도구)
-- Tailwind CSS (스타일링)
-- Framer Motion (애니메이션)
-- Socket.io-client (실시간 통신)
-- Zustand (상태관리)
-```
+### ✅ 구현 완료된 기능
 
-### 2.2 백엔드
-```
-- Node.js + Express
-- Socket.io (실시간 멀티플레이)
-- Firebase Realtime Database (게임 상태 저장)
-- Firebase Authentication (간편 로그인)
-```
+#### 게임 핵심 기능
+- [x] 삼국(고구려, 백제, 신라) 선택 및 플레이
+- [x] 실시간 멀티플레이어 (Socket.io)
+- [x] 싱글플레이어 AI 대전
+- [x] 턴제 게임 진행
+- [x] 역사 이벤트 시스템 (100개 이상)
+- [x] 투표 및 의사결정 시스템
 
-### 2.3 배포
-```
-- Frontend: Vercel (무료)
-- Backend: Railway / Render (무료 티어)
-- Database: Firebase Spark Plan (무료)
-```
+#### 소통 기능
+- [x] 실시간 채팅 (팀/공개/외교)
+- [x] AI 어드바이저 (Google Gemini)
 
-### 2.4 AI (무료 옵션)
-```
-- Google Gemini API (무료 티어: 60 QPM)
-- 또는 Hugging Face Inference API (무료)
-- 용도: AI 조언자, 역사 설명 생성
-```
+#### 전투 및 외교
+- [x] 국가 간 전투 시스템
+- [x] 동맹 및 적대 관계
+- [x] 전투 결과 시뮬레이션
 
----
+#### 교사 기능
+- [x] 기본 대시보드
+- [x] 게임 생성 및 관리
+- [x] 국가별 현황 확인
+- [x] 채팅 로그 확인
 
-## 3. 개발 단계별 계획
+#### UI/UX
+- [x] 한국 전통 디자인 테마
+- [x] 반응형 레이아웃
+- [x] 애니메이션 (Framer Motion)
 
-### 📅 Week 1: 프로젝트 설정 및 기본 UI
-| 일차 | 작업 내용 | 산출물 |
-|------|----------|--------|
-| 1-2 | 프로젝트 초기 설정 (React + Vite + TypeScript) | 프로젝트 구조 |
-| 3-4 | Firebase 연동, 기본 인증 | 로그인/회원가입 |
-| 5-6 | 메인 화면, 방 생성 UI | 랜딩 페이지 |
-| 7 | 국가 선택 화면 | 팀 선택 UI |
+### ❌ 부족한 기능 (출품 필수)
 
-**목표**: 방 생성 → 국가 선택 → 게임 대기 화면 완성
+#### 학습 데이터 분석
+- [ ] 학습 활동 로그 수집 시스템
+- [ ] 개인별 학습 데이터 분석
+- [ ] 학급별 통계 대시보드
+- [ ] 학습 리포트 자동 생성 (PDF)
 
----
+#### 교육과정 연계
+- [ ] 성취기준 매핑 문서
+- [ ] 핵심 역량 연계 설명
+- [ ] 수업 지도안 (8차시)
+- [ ] 교사용/학생용 매뉴얼
 
-### 📅 Week 2: 게임 코어 시스템
-| 일차 | 작업 내용 | 산출물 |
-|------|----------|--------|
-| 1-2 | 게임 상태 관리 구조 설계 | Zustand 스토어 |
-| 3-4 | 턴 시스템 구현 | 턴 진행 로직 |
-| 5-6 | 스탯 시스템 (군사/경제/외교/문화) | 스탯 UI |
-| 7 | 기본 지도 UI | 삼국 지도 컴포넌트 |
+#### 피드백 시스템
+- [ ] 즉각적 학습 피드백
+- [ ] 성취 배지 시스템
+- [ ] 오답 노트 기능
 
-**목표**: 싱글 플레이어로 턴 진행 가능한 상태
+#### 교육 콘텐츠
+- [ ] 역사 자료실 (연표, 인물, 지도)
+- [ ] 역사 용어 사전
+- [ ] 토론 주제 가이드
 
 ---
 
-### 📅 Week 3: 이벤트 시스템
-| 일차 | 작업 내용 | 산출물 |
-|------|----------|--------|
-| 1-2 | 이벤트 데이터 구조 설계 | 이벤트 JSON |
-| 3-4 | 이벤트 표시 UI | 선택지 모달 |
-| 5-6 | 선택 결과 반영 로직 | 스탯 변화 |
-| 7 | 역사 이벤트 20개 작성 | 콘텐츠 |
+## Phase 0: 게임 기능 강화 (1주)
 
-**목표**: 이벤트 발생 → 선택 → 결과 반영 흐름 완성
+> **목표**: 문명(Civilization) 게임을 참고하여 게임성 및 교육적 가치 향상
+> **기간**: 1주 (Day 0-7)
+> **참고**: 전략 게임의 핵심 요소를 삼국시대 역사 교육에 접목
 
----
+### 🎯 구현 기능 목록
 
-### 📅 Week 4: 실시간 멀티플레이 (핵심!)
-| 일차 | 작업 내용 | 산출물 |
-|------|----------|--------|
-| 1-2 | Socket.io 서버 설정 | 백엔드 서버 |
-| 3-4 | 방 동기화 (입장/퇴장) | 실시간 접속 |
-| 5-6 | 팀 투표 시스템 | 투표 UI |
-| 7 | 게임 상태 동기화 | 실시간 업데이트 |
-
-**목표**: 3팀이 동시에 접속하여 턴 진행 가능
+| 순서 | 기능 | 예상 기간 | 교육적 가치 | 상태 |
+|------|------|----------|------------|------|
+| 1 | 다양한 승리 조건 | 1일 | 역사의 다양한 측면 이해 | ✅ 완료 |
+| 2 | 위인 시스템 | 2일 | 역사 인물 학습 | ✅ 완료 |
+| 3 | 테크 트리 | 2일 | 기술/문화 발전 이해 | ✅ 완료 |
+| 4 | 문화유산 시스템 | 1일 | 삼국의 문화재 학습 | ✅ 완료 |
 
 ---
 
-### 📅 Week 5: 외교 및 전투
-| 일차 | 작업 내용 | 산출물 |
-|------|----------|--------|
-| 1-2 | 실시간 채팅 (팀 내/국가 간) | 채팅 UI |
-| 3-4 | 동맹/적대 시스템 | 외교 관계 |
-| 5-6 | 간소화 전투 시스템 | 전투 결과 |
-| 7 | 역사 이벤트 30개 추가 | 콘텐츠 확장 |
+### 1. 다양한 승리 조건 시스템 ⭐ 최우선
 
-**목표**: 국가 간 상호작용 가능
+**우선순위**: 🔴 최우선 (Day 1)
 
----
+**현재 문제점**:
+- 군사적 승리만 존재
+- 다양한 플레이 스타일 제한
+- 역사는 전쟁만이 아님을 배울 수 없음
 
-### 📅 Week 6: 게임 완성
-| 일차 | 작업 내용 | 산출물 |
-|------|----------|--------|
-| 1-2 | 승리 조건 구현 | 게임 종료 로직 |
-| 3-4 | 결과 화면 (역사 비교) | 결과 UI |
-| 5-6 | AI 조언자 연동 (무료 API) | AI 기능 |
-| 7 | UI/UX 개선 | 시각적 완성도 |
-
-**목표**: 게임 시작부터 종료까지 전체 플로우 완성
-
----
-
-### 📅 Week 7: 테스트 및 안정화
-| 일차 | 작업 내용 | 산출물 |
-|------|----------|--------|
-| 1-2 | 내부 테스트 (버그 수정) | 안정화 |
-| 3-4 | 학급 베타 테스트 | 피드백 |
-| 5-6 | 밸런스 조정 | 게임성 개선 |
-| 7 | 성능 최적화 | 30명 동접 |
-
-**목표**: 실제 수업에서 사용 가능한 안정성 확보
-
----
-
-### 📅 Week 8: 마무리 및 발표 준비
-| 일차 | 작업 내용 | 산출물 |
-|------|----------|--------|
-| 1-2 | 최종 버그 수정 | 릴리즈 버전 |
-| 3-4 | 사용자 매뉴얼 작성 | 문서 |
-| 5-6 | 발표 자료 제작 | PPT, 시연 영상 |
-| 7 | 배포 및 최종 점검 | 라이브 서비스 |
-
-**목표**: 대회 발표 준비 완료
-
----
-
-## 4. MVP 기능 정의
-
-### 4.1 필수 기능 (Must Have)
-
-#### 🎮 게임 흐름
-```
-1. 방 생성 (교사가 코드 생성)
-2. 학생 입장 (코드 입력)
-3. 국가 선택 (고구려/백제/신라)
-4. 게임 시작
-5. 턴 진행 (이벤트 → 선택 → 결과)
-6. 게임 종료 (승리 조건 달성 또는 타임아웃)
-7. 결과 화면
-```
-
-#### 📊 국력 시스템
-```typescript
-interface NationStats {
-  military: number;    // 군사력 (0-500)
-  economy: number;     // 경제력 (0-500)
-  diplomacy: number;   // 외교력 (0-500)
-  culture: number;     // 문화력 (0-500)
-  gold: number;        // 재화
-  population: number;  // 인구
-  morale: number;      // 민심 (0-100)
-}
-```
-
-#### 🗳️ 투표 시스템
-```
-- 이벤트 발생 시 60초 제한
-- 팀원 개별 투표
-- 과반수 결정 (동점 시 무작위)
-- 실시간 투표 현황 표시
-```
-
-### 4.2 선택 기능 (Should Have)
-- 팀 내 채팅
-- 국가 간 외교 채팅
-- 동맹 시스템
-- 역사 팁/설명 팝업
-
-### 4.3 추가 기능 (Could Have)
-- AI 조언자
-- 교사 대시보드
-- 도전과제
-- 게임 리플레이
-
-### 4.4 제외 기능 (Won't Have - MVP)
-- VR/AR
-- 모바일 앱
-- 복잡한 전투 시스템
-- 영토 확장 지도
-
----
-
-## 5. 데이터 구조
-
-### 5.1 Firebase Realtime Database 구조
-
-```
-/games
-  /{gameId}
-    /info
-      - code: "ABC123"
-      - teacherId: "teacher_001"
-      - status: "waiting" | "playing" | "finished"
-      - currentTurn: 1
-      - currentYear: 300
-      - startedAt: timestamp
-      - settings
-        - maxTurns: 30
-        - turnDuration: 120
-        - difficulty: "normal"
-    
-    /teams
-      /goguryeo
-        - players: ["uid1", "uid2"]
-        - stats: { military, economy, diplomacy, culture }
-        - gold: 1000
-        - population: 50000
-        - morale: 70
-        - allies: ["silla"]
-        - enemies: []
-      /baekje
-        - ...
-      /silla
-        - ...
-    
-    /events
-      /{eventIndex}
-        - eventId: "buddhism_372"
-        - turn: 5
-        - targetTeam: "goguryeo"
-        - votes: { uid1: "A", uid2: "B" }
-        - result: "A"
-        - appliedAt: timestamp
-    
-    /chat
-      /{messageId}
-        - sender: "uid1"
-        - senderName: "김철수"
-        - team: "goguryeo"
-        - message: "불교 받아들이자!"
-        - type: "team" | "public" | "diplomacy"
-        - target: "baekje" (외교 시)
-        - timestamp: ...
-
-/users
-  /{uid}
-    - name: "김철수"
-    - email: "..."
-    - role: "student" | "teacher"
-    - currentGame: "gameId"
-    - stats
-      - gamesPlayed: 5
-      - wins: 2
-      - achievements: ["historian", "diplomat"]
-```
-
-### 5.2 이벤트 데이터 (JSON 파일)
+**구현 내용**:
 
 ```typescript
-// /src/data/events.json
-interface HistoricalEvent {
-  id: string;
-  year: number;
-  targetNation: "goguryeo" | "baekje" | "silla" | "all";
-  
-  title: string;
+// server/src/types.ts 추가
+export type VictoryType = 'military' | 'cultural' | 'diplomatic' | 'technological' | 'score';
+
+export interface VictoryCondition {
+  type: VictoryType;
+  name: string;
   description: string;
-  historicalContext: string;  // 역사적 배경 설명
-  
-  choices: Choice[];
-  
-  difficulty: "easy" | "normal" | "hard";
-  category: "military" | "economy" | "diplomacy" | "culture";
-  
-  // 대체역사 분기
-  triggers?: {
-    condition: string;  // 이전 선택 조건
-    newEventId: string; // 대체 이벤트
-  }[];
+  requirement: {
+    military?: { conqueredNations: number };      // 정복한 국가 수
+    cultural?: { culturePoints: number };          // 문화 점수
+    diplomatic?: { alliances: number; peaceTurns: number }; // 동맹 수, 평화 유지 턴
+    technological?: { completedTechs: number };    // 완료 기술 수
+    score?: { minTurns: number };                  // 최소 턴 (시간 승리)
+  };
 }
 
-interface Choice {
-  id: string;
-  text: string;
-  effects: {
-    military?: number;
-    economy?: number;
-    diplomacy?: number;
-    culture?: number;
-    gold?: number;
-    population?: number;
-    morale?: number;
-  };
-  isHistorical: boolean;  // 실제 역사와 같은 선택인지
-  tooltip: string;        // 역사 팁
-  risk: "safe" | "normal" | "risky";
-  
-  // 특수 효과
-  special?: {
-    type: "alliance" | "war" | "territory" | "unlock";
-    target?: string;
-    value?: any;
-  };
+// 국가 스탯 확장
+export interface NationStats {
+  // 기존 스탯
+  military: number;
+  economy: number;
+  culture: number;
+  territory: number;
+  population: number;
+  // 새로운 스탯
+  culturePoints: number;       // 문화 점수 (문화 승리용)
+  techProgress: number;        // 기술 진행도
+  diplomaticReputation: number; // 외교 평판
 }
 ```
 
-### 5.3 예시 이벤트
+**승리 조건 5가지**:
 
-```json
-{
-  "id": "buddhism_372",
-  "year": 372,
-  "targetNation": "goguryeo",
-  "title": "불교 전래",
-  "description": "전진(前秦)에서 승려 순도가 불상과 경문을 가지고 왔습니다. 새로운 종교를 어떻게 하시겠습니까?",
-  "historicalContext": "소수림왕 2년, 중국 전진에서 순도가 불교를 전파했습니다. 이는 고구려 최초의 공식적인 불교 수용이었습니다.",
-  
-  "choices": [
-    {
-      "id": "A",
-      "text": "불교를 국가 종교로 받아들인다",
-      "effects": { "culture": 30, "morale": 20, "gold": -100 },
-      "isHistorical": true,
-      "tooltip": "실제 소수림왕은 불교를 수용하고 2년 뒤 절을 지었어요",
-      "risk": "safe"
-    },
-    {
-      "id": "B",
-      "text": "불교를 거부하고 순도를 돌려보낸다",
-      "effects": { "military": 10, "morale": -10 },
-      "isHistorical": false,
-      "tooltip": "역사와 다른 선택입니다. 어떤 결과가 생길까요?",
-      "risk": "normal"
-    },
-    {
-      "id": "C",
-      "text": "일단 순도를 머물게 하고 상황을 지켜본다",
-      "effects": {},
-      "isHistorical": false,
-      "tooltip": "신중한 선택이지만, 기회를 놓칠 수도 있어요",
-      "risk": "safe"
-    }
-  ],
-  
-  "difficulty": "easy",
-  "category": "culture"
-}
-```
+| 유형 | 이름 | 조건 | 역사적 의미 |
+|------|------|------|------------|
+| 🏆 군사 승리 | 삼국통일 | 다른 두 국가 정복 | 신라의 삼국통일 |
+| 🏛️ 문화 승리 | 문화대국 | 문화 점수 500점 달성 | 백제의 문화 발전 |
+| 📜 외교 승리 | 평화의 시대 | 2국 동맹 + 20턴 평화 유지 | 외교적 균형 |
+| 🔬 기술 승리 | 기술 선진국 | 모든 기술 연구 완료 | 고구려의 철기 문화 |
+| ⏰ 점수 승리 | 최강국 | 30턴 후 최고 총점 | 종합 국력 |
+
+**UI 추가**:
+- 게임 화면에 "승리 조건 진행 상황" 패널
+- 각 승리 조건별 진행 바
+- 승리 달성 시 엔딩 화면 분기
+
+**예상 공수**: 1일
 
 ---
 
-## 6. API 설계
+### 2. 위인 시스템 ⭐ 높은 교육적 가치
 
-### 6.1 REST API (Express)
+**우선순위**: 🟠 중요 (Day 2-3)
 
-```
-# 인증
-POST   /api/auth/register     - 회원가입
-POST   /api/auth/login        - 로그인
-GET    /api/auth/me           - 내 정보
-
-# 게임
-POST   /api/games             - 방 생성 (교사)
-GET    /api/games/:code       - 방 정보 조회
-POST   /api/games/:code/join  - 방 입장
-DELETE /api/games/:id         - 방 삭제
-
-# 이벤트 데이터
-GET    /api/events            - 전체 이벤트 목록
-GET    /api/events/:id        - 이벤트 상세
-```
-
-### 6.2 Socket.io 이벤트
+**구현 내용**:
 
 ```typescript
-// Client → Server
-socket.emit('join-game', { gameCode, teamId });
-socket.emit('leave-game', { gameCode });
-socket.emit('vote', { gameCode, eventId, choiceId });
-socket.emit('chat', { gameCode, message, type, target? });
-socket.emit('diplomacy', { gameCode, action, targetTeam, data });
-socket.emit('ready', { gameCode });  // 게임 시작 준비
+// client/src/data/heroes.ts
+export interface HistoricalHero {
+  id: string;
+  name: string;
+  nation: Nation;
+  era: string;
+  title: string;
+  portrait?: string;
+  specialAbility: {
+    name: string;
+    description: string;
+    effect: HeroEffect;
+    duration: number; // 턴
+    cooldown: number; // 재사용 대기 턴
+  };
+  historicalFact: string;
+  unlockCondition: {
+    type: 'turn' | 'event' | 'stat';
+    requirement: any;
+  };
+}
 
-// Server → Client
-socket.on('player-joined', { player, team });
-socket.on('player-left', { playerId });
-socket.on('game-started', { initialState });
-socket.on('turn-changed', { turn, year });
-socket.on('event-triggered', { event, deadline });
-socket.on('vote-updated', { eventId, votes });
-socket.on('event-resolved', { eventId, result, effects });
-socket.on('stats-updated', { team, stats });
-socket.on('chat-message', { message });
-socket.on('diplomacy-request', { from, action, data });
-socket.on('game-ended', { winner, reason, summary });
-socket.on('error', { message });
+export type HeroEffect = 
+  | { type: 'military_boost'; value: number }
+  | { type: 'culture_boost'; value: number }
+  | { type: 'diplomacy_boost'; value: number }
+  | { type: 'economy_boost'; value: number }
+  | { type: 'defense_boost'; value: number };
+
+// 위인 데이터
+export const HEROES: HistoricalHero[] = [
+  // 고구려
+  {
+    id: 'gwanggaeto',
+    name: '광개토대왕',
+    nation: 'goguryeo',
+    era: '391-413년',
+    title: '정복왕',
+    specialAbility: {
+      name: '정복왕의 기상',
+      description: '전투 승률 25% 증가',
+      effect: { type: 'military_boost', value: 25 },
+      duration: 3,
+      cooldown: 10,
+    },
+    historicalFact: '영토를 크게 확장하여 만주와 한반도 북부를 지배. 광개토대왕비에 업적이 기록됨.',
+    unlockCondition: { type: 'turn', requirement: 5 },
+  },
+  {
+    id: 'eulji',
+    name: '을지문덕',
+    nation: 'goguryeo',
+    era: '6세기 말-7세기 초',
+    title: '살수대첩의 영웅',
+    specialAbility: {
+      name: '청야전술',
+      description: '방어 시 적 피해 2배',
+      effect: { type: 'defense_boost', value: 100 },
+      duration: 2,
+      cooldown: 8,
+    },
+    historicalFact: '612년 수나라 대군을 살수에서 격파. 수나라 30만 대군 중 2,700명만 생존.',
+    unlockCondition: { type: 'turn', requirement: 10 },
+  },
+  // 백제
+  {
+    id: 'geunchogo',
+    name: '근초고왕',
+    nation: 'baekje',
+    era: '346-375년',
+    title: '해상왕',
+    specialAbility: {
+      name: '해상 무역로',
+      description: '경제력 30% 증가',
+      effect: { type: 'economy_boost', value: 30 },
+      duration: 5,
+      cooldown: 12,
+    },
+    historicalFact: '백제의 전성기를 이끔. 일본, 중국과 활발한 교류. 칠지도 제작.',
+    unlockCondition: { type: 'turn', requirement: 5 },
+  },
+  {
+    id: 'gyebaek',
+    name: '계백',
+    nation: 'baekje',
+    era: '?-660년',
+    title: '결사대장',
+    specialAbility: {
+      name: '결사 항전',
+      description: '패배 직전 공격력 50% 증가',
+      effect: { type: 'military_boost', value: 50 },
+      duration: 2,
+      cooldown: 15,
+    },
+    historicalFact: '황산벌 전투에서 5천 결사대로 5만 신라군에 맞섬. 4번 승리 후 전사.',
+    unlockCondition: { type: 'stat', requirement: { military: -50 } },
+  },
+  // 신라
+  {
+    id: 'kimyushin',
+    name: '김유신',
+    nation: 'silla',
+    era: '595-673년',
+    title: '삼국통일의 주역',
+    specialAbility: {
+      name: '통일의 의지',
+      description: '동맹 성공률 50% 증가',
+      effect: { type: 'diplomacy_boost', value: 50 },
+      duration: 3,
+      cooldown: 10,
+    },
+    historicalFact: '가야 왕족 출신. 삼국통일의 핵심 인물. 태대각간 최고 관직.',
+    unlockCondition: { type: 'turn', requirement: 5 },
+  },
+  {
+    id: 'seondeok',
+    name: '선덕여왕',
+    nation: 'silla',
+    era: '632-647년',
+    title: '최초의 여왕',
+    specialAbility: {
+      name: '문화 부흥',
+      description: '문화 점수 획득 40% 증가',
+      effect: { type: 'culture_boost', value: 40 },
+      duration: 5,
+      cooldown: 12,
+    },
+    historicalFact: '한국 최초의 여왕. 첨성대, 황룡사 9층 목탑 건립. 불교 발전.',
+    unlockCondition: { type: 'turn', requirement: 8 },
+  },
+];
 ```
+
+**UI 컴포넌트**:
+- `HeroPanel.tsx` - 위인 목록 및 선택
+- `HeroCard.tsx` - 위인 카드 (초상, 능력, 역사 정보)
+- `HeroAbilityModal.tsx` - 능력 발동 확인
+
+**예상 공수**: 2일
 
 ---
 
-## 7. 화면 구성
+### 3. 테크 트리 시스템
 
-### 7.1 화면 목록
+**우선순위**: 🟠 중요 (Day 4-5)
 
+**구현 내용**:
+
+```typescript
+// client/src/data/techTree.ts
+export interface Technology {
+  id: string;
+  name: string;
+  category: 'military' | 'economy' | 'culture' | 'diplomacy';
+  era: number; // 1-3 (초기/중기/후기)
+  cost: { turns: number; gold: number };
+  prerequisites: string[]; // 선행 기술 ID
+  effect: TechEffect;
+  historicalInfo: string;
+  icon: string;
+}
+
+export type TechEffect = 
+  | { type: 'stat_boost'; stat: keyof NationStats; value: number }
+  | { type: 'unlock_unit'; unitId: string }
+  | { type: 'unlock_building'; buildingId: string }
+  | { type: 'special'; description: string };
+
+export const TECH_TREE: Technology[] = [
+  // 1시대 - 초기
+  {
+    id: 'iron_working',
+    name: '철기 기술',
+    category: 'military',
+    era: 1,
+    cost: { turns: 2, gold: 100 },
+    prerequisites: [],
+    effect: { type: 'stat_boost', stat: 'military', value: 10 },
+    historicalInfo: '철제 무기와 농기구 제작. 고구려의 철기 문화가 대표적.',
+    icon: '⚔️',
+  },
+  {
+    id: 'agriculture',
+    name: '관개 농업',
+    category: 'economy',
+    era: 1,
+    cost: { turns: 2, gold: 80 },
+    prerequisites: [],
+    effect: { type: 'stat_boost', stat: 'economy', value: 15 },
+    historicalInfo: '저수지와 수로 건설. 벽골제(백제)가 대표적.',
+    icon: '🌾',
+  },
+  {
+    id: 'buddhism',
+    name: '불교 수용',
+    category: 'culture',
+    era: 1,
+    cost: { turns: 3, gold: 120 },
+    prerequisites: [],
+    effect: { type: 'stat_boost', stat: 'culture', value: 20 },
+    historicalInfo: '4세기 고구려, 백제에 전래. 왕실 후원으로 발전.',
+    icon: '☸️',
+  },
+  // 2시대 - 중기
+  {
+    id: 'cavalry',
+    name: '기병 양성',
+    category: 'military',
+    era: 2,
+    cost: { turns: 3, gold: 150 },
+    prerequisites: ['iron_working'],
+    effect: { type: 'stat_boost', stat: 'military', value: 20 },
+    historicalInfo: '고구려의 철갑기병(개마무사)이 유명.',
+    icon: '🐴',
+  },
+  {
+    id: 'maritime_trade',
+    name: '해상 무역',
+    category: 'economy',
+    era: 2,
+    cost: { turns: 3, gold: 180 },
+    prerequisites: ['agriculture'],
+    effect: { type: 'stat_boost', stat: 'economy', value: 25 },
+    historicalInfo: '백제의 중국, 일본과의 해상 교류.',
+    icon: '⛵',
+  },
+  {
+    id: 'temple_building',
+    name: '사찰 건축',
+    category: 'culture',
+    era: 2,
+    cost: { turns: 4, gold: 200 },
+    prerequisites: ['buddhism'],
+    effect: { type: 'stat_boost', stat: 'culture', value: 30 },
+    historicalInfo: '황룡사, 미륵사 등 대규모 사찰 건립.',
+    icon: '🏛️',
+  },
+  // 3시대 - 후기
+  {
+    id: 'fortification',
+    name: '성곽 기술',
+    category: 'military',
+    era: 3,
+    cost: { turns: 4, gold: 250 },
+    prerequisites: ['cavalry'],
+    effect: { type: 'stat_boost', stat: 'territory', value: 15 },
+    historicalInfo: '산성 축조 기술. 고구려 산성이 대표적.',
+    icon: '🏰',
+  },
+  {
+    id: 'writing_system',
+    name: '기록 문화',
+    category: 'culture',
+    era: 3,
+    cost: { turns: 5, gold: 300 },
+    prerequisites: ['temple_building'],
+    effect: { type: 'special', description: '모든 이벤트 정답률 +10%' },
+    historicalInfo: '삼국사기, 삼국유사 등 역사서 편찬.',
+    icon: '📜',
+  },
+];
 ```
-1. 랜딩 페이지 (/)
-   - 게임 소개
-   - 로그인/회원가입 버튼
-   - 방 코드 입력
 
-2. 로그인/회원가입 (/auth)
-   - 간편 로그인 (구글, 이메일)
-   - 교사/학생 구분
-
-3. 대시보드 (/dashboard)
-   - 교사: 방 생성, 이전 게임 기록
-   - 학생: 방 입장, 내 기록
-
-4. 대기실 (/game/:code/lobby)
-   - 팀 선택 (고구려/백제/신라)
-   - 팀원 목록
-   - 준비 버튼
-   - 채팅
-
-5. 게임 화면 (/game/:code/play)
-   - 지도 (중앙)
-   - 내 팀 스탯 (좌측)
-   - 현재 턴/연도 (상단)
-   - 채팅 (우측 하단)
-   - 이벤트 모달
-
-6. 이벤트 모달 (오버레이)
-   - 이벤트 제목/설명
-   - 선택지 (효과, 역사 팁)
-   - 투표 현황
-   - 타이머
-
-7. 결과 화면 (/game/:code/result)
-   - 승리 팀
-   - 최종 스탯 비교
-   - 역사 vs 우리의 선택 비교
-   - 주요 이벤트 타임라인
+**테크 트리 UI**:
+```
+┌──────────────────────────────────────────────────────────┐
+│                    삼국시대 기술 트리                      │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│  [철기 기술]⚔️ ─→ [기병 양성]🐴 ─→ [성곽 기술]🏰        │
+│                                                          │
+│  [관개 농업]🌾 ─→ [해상 무역]⛵                         │
+│                                                          │
+│  [불교 수용]☸️ ─→ [사찰 건축]🏛️ ─→ [기록 문화]📜       │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
 ```
 
-### 7.2 UI 컴포넌트
-
-```
-공통 컴포넌트:
-- Button, Input, Modal
-- Card, Badge, Progress
-- Timer, Tooltip
-- Chat, PlayerAvatar
-
-게임 컴포넌트:
-- GameMap (삼국 지도)
-- StatsPanel (국력 표시)
-- EventCard (이벤트 카드)
-- VotePanel (투표 현황)
-- TeamList (팀원 목록)
-- TurnIndicator (턴 표시)
-- ChatBox (채팅창)
-- DiplomacyPanel (외교 패널)
-```
+**예상 공수**: 2일
 
 ---
 
-## 8. 폴더 구조
+### 4. 문화유산 시스템
 
+**우선순위**: 🟡 중요 (Day 6)
+
+**구현 내용**:
+
+```typescript
+// client/src/data/culturalHeritage.ts
+export interface CulturalHeritage {
+  id: string;
+  name: string;
+  nation: Nation;
+  type: 'architecture' | 'artifact' | 'monument';
+  constructionCost: { turns: number; gold: number; culturePoints: number };
+  effect: {
+    cultureBonus: number;
+    specialEffect?: string;
+  };
+  historicalInfo: string;
+  imageUrl?: string;
+  unlockTech?: string; // 선행 기술
+}
+
+export const CULTURAL_HERITAGES: CulturalHeritage[] = [
+  // 고구려
+  {
+    id: 'gwanggaeto_stele',
+    name: '광개토대왕비',
+    nation: 'goguryeo',
+    type: 'monument',
+    constructionCost: { turns: 3, gold: 200, culturePoints: 50 },
+    effect: { cultureBonus: 30, specialEffect: '군사력 +10%' },
+    historicalInfo: '414년 건립. 광개토대왕의 정복 업적 기록. 현재 중국 지안시 소재.',
+  },
+  {
+    id: 'anak_tomb',
+    name: '안악 3호분 벽화',
+    nation: 'goguryeo',
+    type: 'artifact',
+    constructionCost: { turns: 2, gold: 150, culturePoints: 30 },
+    effect: { cultureBonus: 25 },
+    historicalInfo: '357년 축조. 고구려 귀족의 생활상과 행렬도 묘사.',
+  },
+  // 백제
+  {
+    id: 'mireuksa',
+    name: '미륵사',
+    nation: 'baekje',
+    type: 'architecture',
+    constructionCost: { turns: 5, gold: 350, culturePoints: 80 },
+    effect: { cultureBonus: 50, specialEffect: '문화 승리 요구 -50점' },
+    historicalInfo: '600년경 무왕 건립. 동아시아 최대 규모 사찰. 서탑 현존.',
+    unlockTech: 'temple_building',
+  },
+  {
+    id: 'chiljido',
+    name: '칠지도',
+    nation: 'baekje',
+    type: 'artifact',
+    constructionCost: { turns: 2, gold: 180, culturePoints: 40 },
+    effect: { cultureBonus: 20, specialEffect: '외교 성공률 +15%' },
+    historicalInfo: '369년 제작. 일본에 하사한 7개 가지 모양 보검.',
+  },
+  // 신라
+  {
+    id: 'hwangnyongsa',
+    name: '황룡사 9층 목탑',
+    nation: 'silla',
+    type: 'architecture',
+    constructionCost: { turns: 6, gold: 400, culturePoints: 100 },
+    effect: { cultureBonus: 60, specialEffect: '문화 승리 요구 -100점' },
+    historicalInfo: '645년 완공. 높이 약 80m. 신라 불교의 상징.',
+    unlockTech: 'temple_building',
+  },
+  {
+    id: 'cheomseongdae',
+    name: '첨성대',
+    nation: 'silla',
+    type: 'architecture',
+    constructionCost: { turns: 3, gold: 250, culturePoints: 60 },
+    effect: { cultureBonus: 35, specialEffect: '기술 연구 속도 +20%' },
+    historicalInfo: '634년 선덕여왕 시기 건립. 동아시아 현존 최고 천문대.',
+    unlockTech: 'writing_system',
+  },
+];
 ```
-history/
-├── client/                    # 프론트엔드
-│   ├── public/
-│   │   └── assets/           # 이미지, 아이콘
-│   ├── src/
-│   │   ├── components/       # UI 컴포넌트
-│   │   │   ├── common/       # 공통 컴포넌트
-│   │   │   ├── game/         # 게임 컴포넌트
-│   │   │   └── layout/       # 레이아웃
-│   │   ├── pages/            # 페이지 컴포넌트
-│   │   ├── hooks/            # 커스텀 훅
-│   │   ├── stores/           # Zustand 스토어
-│   │   ├── services/         # API, Socket 서비스
-│   │   ├── data/             # 이벤트 JSON
-│   │   ├── types/            # TypeScript 타입
-│   │   ├── utils/            # 유틸리티 함수
-│   │   ├── styles/           # 글로벌 스타일
-│   │   ├── App.tsx
-│   │   └── main.tsx
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.ts
-│   ├── tailwind.config.js
-│   └── tsconfig.json
-│
-├── server/                    # 백엔드
-│   ├── src/
-│   │   ├── config/           # 설정 (Firebase, 환경변수)
-│   │   ├── controllers/      # API 컨트롤러
-│   │   ├── middleware/       # 미들웨어
-│   │   ├── routes/           # 라우트
-│   │   ├── services/         # 비즈니스 로직
-│   │   ├── socket/           # Socket.io 핸들러
-│   │   ├── utils/            # 유틸리티
-│   │   └── index.ts          # 진입점
-│   ├── package.json
-│   └── tsconfig.json
-│
-├── shared/                    # 공유 타입/유틸
-│   └── types/
-│
-├── docs/                      # 문서
-│   ├── api.md
-│   ├── events.md
-│   └── manual.md
-│
-├── plan.md                    # 이 문서
-├── .gitignore
-├── .env.example
-└── README.md
-```
+
+**예상 공수**: 1일
 
 ---
 
-## 9. 무료 리소스 활용
+### Phase 0 완료 체크리스트
 
-### 9.1 무료 AI API 옵션
-
-| 서비스 | 무료 한도 | 용도 |
-|--------|----------|------|
-| **Google Gemini** | 60 QPM, 1500 QPD | AI 조언자, 역사 설명 |
-| Hugging Face | 무제한 (속도제한) | 텍스트 생성 |
-| Cohere | 5 QPM | 대안 |
-
-**선택: Google Gemini API (추천)**
-- 가장 넉넉한 무료 한도
-- 한국어 성능 우수
-- 빠른 응답 속도
-
-### 9.2 무료 호스팅
-
-| 서비스 | 용도 | 무료 한도 |
-|--------|------|----------|
-| **Vercel** | 프론트엔드 | 무제한 |
-| **Railway** | 백엔드 | $5/월 크레딧 |
-| **Render** | 백엔드 (대안) | 750시간/월 |
-| **Firebase** | DB, Auth | Spark Plan |
-
-### 9.3 무료 디자인 리소스
-
-```
-아이콘:
-- Lucide Icons (React)
-- Heroicons
-
-이미지:
-- Unsplash (배경)
-- 직접 제작 SVG (지도, 캐릭터)
-
-폰트:
-- Google Fonts (Noto Sans KR)
-- Pretendard
-```
-
-### 9.4 Firebase Spark Plan 한도
-
-```
-- Realtime Database: 1GB 저장, 10GB/월 전송
-- Authentication: 무제한 (이메일, 구글)
-- Hosting: 10GB 저장, 360MB/일 전송
-
-→ 학급 단위 사용에 충분
-```
+- [x] 다양한 승리 조건 시스템 구현 및 테스트 ✅
+- [x] 위인 시스템 구현 및 테스트 ✅
+- [x] 테크 트리 시스템 구현 및 테스트 ✅
+- [x] 문화유산 시스템 구현 및 테스트 ✅
+- [x] UI/UX 통합 ✅
+- [x] 전체 기능 통합 테스트 ✅
+- [x] 코드 정리 및 중복 제거 ✅
 
 ---
 
-## 10. 위험 관리
+## Phase 1: 출품 필수 기능 (2주)
 
-### 10.1 기술적 위험
+> **목표**: 대회 출품에 필요한 최소 요구사항 충족
+> **기간**: 2주 (Day 8-21)
 
-| 위험 | 대응 방안 | 우선순위 |
-|------|----------|----------|
-| Socket.io 동기화 오류 | 낙관적 업데이트 + 재동기화 로직 | 높음 |
-| 30명 동접 성능 | 조기 부하 테스트, 최적화 | 높음 |
-| Firebase 무료 한도 초과 | 사용량 모니터링, 캐싱 | 중간 |
-| AI API 레이트 리밋 | 응답 캐싱, 폴백 메시지 | 낮음 |
+### Week 1 (Day 1-7)
 
-### 10.2 일정 위험
+#### 1. 학습 데이터 수집 시스템 구축
+**우선순위**: 🔴 최우선
 
-| 위험 | 대응 방안 |
-|------|----------|
-| Week 4 (멀티플레이) 지연 | Week 3부터 병행 개발 |
-| 콘텐츠 부족 | AI로 이벤트 초안 생성 |
-| 테스트 시간 부족 | 매주 작은 테스트 진행 |
+**서버 측 구현** (`server/src/`)
+```typescript
+// server/src/types.ts 확장
+export interface LearningLog {
+  id: string;
+  playerId: string;
+  playerName: string;
+  roomId: string;
+  nation: Nation;
+  timestamp: number;
+  logType: 'event_choice' | 'battle' | 'diplomacy' | 'chat' | 'advisor_use';
+  data: {
+    // 이벤트 선택
+    eventId?: string;
+    choiceId?: string;
+    isCorrect?: boolean;
 
-### 10.3 MVP 축소 시나리오
+    // 전투
+    battleResult?: 'win' | 'lose';
 
-시간 부족 시 제거할 기능:
-1. AI 조언자 → 정적 힌트로 대체
-2. 전투 시스템 → 외교만 유지
-3. 교사 대시보드 → 기본 모니터링만
-4. 도전과제 → 제거
-5. 리플레이 → 텍스트 요약만
+    // 외교
+    diplomaticAction?: 'alliance' | 'war' | 'peace';
+    targetNation?: Nation;
 
----
+    // 채팅
+    chatType?: 'team' | 'public' | 'diplomacy';
+    messageLength?: number;
 
-## 📌 진행 현황
+    // AI 어드바이저
+    advisorQuery?: string;
+  };
+}
 
-### ✅ 완료된 작업
+export interface PlayerProgress {
+  playerId: string;
+  playerName: string;
+  nation: Nation;
+  roomId: string;
 
-#### Week 1: 프로젝트 설정 및 기본 UI (완료)
-- [x] 프로젝트 초기 설정 (Vite + React + TypeScript)
-- [x] Tailwind CSS 설정
-- [x] 기본 라우팅 설정 (React Router)
-- [x] 공통 UI 컴포넌트 제작 (Button, Card, Modal, Timer 등)
-- [x] 랜딩 페이지 완성
-- [x] 국가 선택 화면 완성
-- [x] 로비(대기실) 화면 완성
+  // 시간 데이터
+  totalPlayTime: number; // 밀리초
+  sessionStart: number;
+  sessionEnd?: number;
 
-#### Week 2: 게임 코어 시스템 (완료)
-- [x] 게임 상태 관리 구조 설계
-- [x] 턴 시스템 UI 구현
-- [x] 스탯 시스템 UI (군사/경제/외교/문화)
-- [x] 기본 지도 UI 컴포넌트
-- [x] 게임 페이지 완성
-- [x] 결과 페이지 완성
+  // 게임 진행
+  completedTurns: number;
+  totalTurns: number;
 
-#### Week 3: 이벤트 시스템 (완료)
-- [x] 이벤트 데이터 구조 설계
-- [x] 이벤트 표시 모달 UI
-- [x] 선택지 투표 UI
-- [x] 투표 완료 후 역사 배경 표시
-- [x] **역사 이벤트 20개 작성 완료** → `story.md`
+  // 의사결정
+  totalChoices: number;
+  correctChoices: number;
+  incorrectChoices: number;
 
-#### UI/UX 개선 (추가 완료)
-- [x] 바람의 나라 스타일 배경 적용
-- [x] 호국체 폰트 적용
-- [x] 국가별 대표 이미지 (SVG) 제작
-  - 고구려: 삼족오
-  - 백제: 금동대향로
-  - 신라: 금관
-- [x] 모달 위치 버그 수정
-- [x] 게임 이름 변경: "삼국지략" → "역사전쟁:삼국시대"
+  // 활동 빈도
+  battleCount: number;
+  diplomacyCount: number;
+  chatCount: number;
+  advisorUseCount: number;
 
-#### Week 4: 실시간 멀티플레이 (완료)
-- [x] Socket.io 서버 설정 (Express + Socket.io)
-- [x] 백엔드 게임 매니저 구현 (GameManager)
-- [x] 방 생성/참가 시스템 구현
-- [x] Zustand 상태 관리 설정
-- [x] Socket.io 클라이언트 연결 및 이벤트 리스너
-- [x] LobbyPage를 Socket.io와 연결 (실시간 플레이어 목록, 준비 토글, 게임 시작)
-- [x] GamePage를 Socket.io와 연결 (게임 상태 동기화, 투표 시스템, 채팅)
-- [x] 실시간 방 동기화 (입장/퇴장)
-- [x] 팀 투표 시스템 (실시간 투표 전송 및 수신)
-- [x] 게임 상태 동기화 (턴, 연도, 스탯, 이벤트)
+  // 상세 로그
+  learningLogs: LearningLog[];
+}
+```
 
----
+**새 파일 생성**: `server/src/learningAnalytics.ts`
+```typescript
+// 학습 데이터 수집 및 분석 모듈
+export class LearningAnalytics {
+  private progressMap: Map<string, PlayerProgress> = new Map();
 
-#### Week 5: 외교 및 전투 (진행 중)
-- [x] 동맹/적대 시스템 구현
-  - [x] 서버 측 동맹/적대 관리 함수 (proposeAlliance, acceptAlliance, breakAlliance, declareWar, endWar)
-  - [x] Socket.io 이벤트 핸들러 추가
-  - [x] DiplomacyPanel 컴포넌트 생성
-  - [x] GamePage에 외교 패널 통합
-  - [x] gameStore에 외교 액션 추가
+  // 플레이어 세션 시작
+  startSession(playerId: string, playerName: string, nation: Nation, roomId: string): void
 
-#### Week 5: 외교 및 전투 (진행 중)
-- [x] 동맹/적대 시스템 구현
-  - [x] 서버 측 동맹/적대 관리 함수 (proposeAlliance, acceptAlliance, breakAlliance, declareWar, endWar)
-  - [x] Socket.io 이벤트 핸들러 추가
-  - [x] DiplomacyPanel 컴포넌트 생성
-  - [x] GamePage에 외교 패널 통합
-  - [x] gameStore에 외교 액션 추가
-- [x] 실시간 채팅 시스템 개선
-  - [x] ChatPanel 컴포넌트 생성 (채널 탭: 팀/공개/외교)
-  - [x] 채널별 메시지 필터링
-  - [x] GamePage에 새로운 채팅 패널 통합
+  // 로그 기록
+  logEventChoice(playerId: string, eventId: string, choiceId: string, isCorrect: boolean): void
+  logBattle(playerId: string, result: 'win' | 'lose'): void
+  logDiplomacy(playerId: string, action: string, target: Nation): void
+  logChat(playerId: string, type: string, messageLength: number): void
+  logAdvisorUse(playerId: string, query: string): void
 
-#### Week 5: 외교 및 전투 (완료)
-- [x] 동맹/적대 시스템 구현
-  - [x] 서버 측 동맹/적대 관리 함수 (proposeAlliance, acceptAlliance, breakAlliance, declareWar, endWar)
-  - [x] Socket.io 이벤트 핸들러 추가
-  - [x] DiplomacyPanel 컴포넌트 생성
-  - [x] GamePage에 외교 패널 통합
-  - [x] gameStore에 외교 액션 추가
-- [x] 실시간 채팅 시스템 개선
-  - [x] ChatPanel 컴포넌트 생성 (채널 탭: 팀/공개/외교)
-  - [x] 채널별 메시지 필터링
-  - [x] GamePage에 새로운 채팅 패널 통합
-- [x] 간소화 전투 시스템 구현
-  - [x] 서버 측 전투 로직 (initiateBattle, calculateBattleResult, applyBattleResult)
-  - [x] 전투력 계산 (군사력 + 민심 + 동맹 지원 + 랜덤 요소)
-  - [x] Socket.io 전투 이벤트 핸들러
-  - [x] BattleModal 컴포넌트 생성
-  - [x] DiplomacyPanel에 전투 제안 버튼 추가
-  - [x] GamePage에 전투 모달 통합
+  // 데이터 조회
+  getPlayerProgress(playerId: string): PlayerProgress | null
+  getRoomProgress(roomId: string): PlayerProgress[]
+
+  // 통계 계산
+  calculateAccuracyRate(playerId: string): number
+  calculateEngagementScore(playerId: string): number
+}
+```
+
+**gameManager.ts 통합**
+- 기존 이벤트 처리 로직에 로그 수집 추가
+- `handleVote()` 함수에 정답/오답 기록
+- `handleBattle()` 함수에 전투 결과 기록
+- 채팅 전송 시 활동 로그 기록
+
+**작업 시간**: 3일
 
 ---
 
-#### Week 6: 게임 완성 (완료)
-- [x] 승리 조건 구현
-  - [x] 최대 턴 도달 시 점수 기반 승자 결정
-  - [x] 통일 조건 (다른 나라 스탯 0 이하)
-  - [x] 투표 완료 후 턴 진행 및 게임 종료 체크
-  - [x] 전투 결과 후 게임 종료 체크
-  - [x] 게임 종료 시 gameEnded 이벤트 전송
-- [x] 결과 화면 개선
-  - [x] ResultPage를 실제 게임 데이터와 연결
-  - [x] 점수 기반 순위 표시
-  - [x] 최종 스탯 및 업적 표시
-  - [x] GamePage에서 게임 종료 시 자동 이동
-- [x] AI 조언자 연동 (Gemini API)
-  - [x] 서버 측 Gemini API 통합 (`@google/generative-ai`)
-  - [x] AI 조언자 API 엔드포인트 (`/api/ai/advice`)
-  - [x] AI 조언자 컴포넌트 생성 (`AIAdvisor.tsx`)
-  - [x] EventModal에 AI 조언자 버튼 추가
-  - [x] 폴백 조언 시스템 (API 실패 시)
-  - [x] 환경 변수 설정 가이드 (`.env.example`)
-- [x] 싱글플레이 모드 개선
-  - [x] 중복 이벤트 방지 시스템
-  - [x] 점수 시스템 (역사적 선택, 긍정 효과 보너스, 부정 효과 감점)
-  - [x] 선택지 랜덤 배열
-  - [x] 게임 종료 화면 (최종 점수, 평가, 대기실로 돌아가기)
-  - [x] 이벤트 연도 순서대로 진행
-- [x] 문화재 이벤트 추가
-  - [x] 고구려: 고분벽화 제작
-  - [x] 백제: 정림사지 5층석탑, 무령왕릉, 금동대향로
-  - [x] 신라: 경주 금관총 금관, 안압지
-  - [x] 각 문화재 이벤트에 3개 선택지 추가 (고민할 수 있는 선택지)
+#### 2. 교사용 학습 분석 대시보드 v1
+**우선순위**: 🔴 최우선
 
-**설정 필요**: 서버 `.env` 파일에 `GEMINI_API_KEY` 추가
-- Google AI Studio에서 발급: https://makersuite.google.com/app/apikey
-- 무료 티어: 60 QPM, 1500 QPD
+**클라이언트 구현** (`client/src/pages/TeacherDashboardPage.tsx`)
 
-#### 싱글플레이 AI 대전 모드 개선 (추가 완료)
-- [x] 싱글플레이 "팀 모드"를 "AI 대전"으로 명칭 변경
-  - [x] `SinglePlayerModeSelectPage.tsx`: 모드 선택 화면 텍스트 변경
-  - [x] `SinglePlayerTeamSetupPage.tsx` → `SinglePlayerAISetupPage.tsx`로 파일명 변경
-- [x] AI 플레이어 생성 슬라이더 UI 제거
-  - [x] AI 플레이어는 자동으로 배치되도록 변경
-- [x] AI 플레이어 자동 배치 시스템 구현
-  - [x] 사용자가 선택한 국가를 제외한 나머지 두 국가에 각각 1명씩 AI 플레이어 자동 배치
-  - [x] `NationSelectPage.tsx`: 국가 선택 시 자동으로 AI 플레이어 추가 로직 구현
-  - [x] `Promise.all`을 사용하여 모든 AI 플레이어 추가 완료 후 로비로 이동
-- [x] 게임 시작 권한 변경
-  - [x] AI 대전 모드에서는 호스트가 아닌 사용자(플레이어)에게 게임 시작 권한 부여
-  - [x] `LobbyPage.tsx`: 게임 시작 버튼 표시 조건 수정
-- [x] 게임 시작 전 카운트다운 화면 추가
-  - [x] 게임 시작 버튼 클릭 시 "5, 4, 3, 2, 1" 카운트다운 표시
-  - [x] 카운트다운 완료 후 게임 시작
-- [x] 게임 모드 분리 및 유틸리티 함수 추가
-  - [x] `client/src/utils/gameMode.ts` 파일 생성
-  - [x] `isSinglePlayerAIMode()`, `isMultiplayerMode()` 등 게임 모드 감지 유틸리티 함수 구현
-  - [x] LocalStorage 기반 게임 모드 관리 (`singlePlayerRoomCode` 활용)
-  - [x] `LobbyPage.tsx`, `NationSelectPage.tsx` 등에서 유틸리티 함수 사용으로 코드 정리
-- [x] AI 대전 모드 이벤트 필터링 개선
-  - [x] `server/src/index.ts`: `selectEventForTurn` 함수 수정
-  - [x] AI 대전 모드에서는 선택한 국가의 이벤트만 표시 (targetNation이 'all'인 이벤트 제외)
-  - [x] 이벤트를 연도 순서대로 정렬하여 표시
-  - [x] `story.md`의 36개 이벤트 (국가별 12개씩) 반영 확인
-- [x] 채팅 메시지 중복 문제 해결
-  - [x] `client/src/stores/gameStore.ts`: `initializeSocketListeners`에서 `chatMessage` 리스너 중복 등록 방지
-  - [x] `removeAllListeners('chatMessage')` 추가하여 중복 메시지 방지
+기존 대시보드를 확장하여 다음 기능 추가:
 
-#### 멀티플레이 모드 개선 (추가 완료)
-- [x] 멀티플레이와 AI 대전 모드 코드 명확히 분리
-  - [x] 서버 측 `isAIBattleMode` 함수로 모드 감지 로직 개선
-  - [x] 멀티플레이 모드에서 AI 플레이어 추가/제거 기능 완전 제거
-    - [x] `LobbyPage.tsx`: AI 추가/제거 버튼이 멀티플레이 모드에서 표시되지 않도록 수정
-    - [x] `handleAddAI`, `handleRemoveAI` 함수에 멀티플레이 모드 가드 추가
-    - [x] 서버 측 `/api/ai/add`, `/api/ai/remove` 엔드포인트에 멀티플레이 모드 체크 추가
-  - [x] 멀티플레이 모드 진입 시 기존 AI 플레이어 자동 제거
-    - [x] `server/src/index.ts`: `selectTeam` 이벤트 핸들러에서 멀티플레이 모드 감지 시 AI 플레이어 자동 제거 로직 추가
-- [x] 멀티플레이 방 코드 입력 방식 변경
-  - [x] `LandingPage.tsx`: "Join Game" 모달 제거
-  - [x] 멀티플레이 버튼 클릭 시 바로 `/select`로 이동하도록 변경
-  - [x] 멀티플레이 모드는 고정된 'MAIN' 방 코드 사용
+**개인별 학습 현황 테이블**
+```typescript
+interface StudentProgressRow {
+  playerId: string;
+  playerName: string;
+  nation: Nation;
+  playTime: string; // "45분 30초"
+  completedTurns: number;
+  accuracyRate: number; // 0-100
+  choiceCount: number;
+  battleCount: number;
+  diplomacyCount: number;
+  chatCount: number;
+  advisorUseCount: number;
+  engagementScore: number; // 참여도 점수 0-100
+}
+```
 
-### 🔄 진행 중
+**새로운 UI 컴포넌트**
+- 학생별 진도 현황 테이블
+- 정답률 차트 (막대 그래프)
+- 활동 참여도 히트맵
+- 국가별 비교 차트
+- 실시간 활동 로그 스트림
 
-#### Week 7: 테스트 및 안정화 (진행 중)
-- [ ] 내부 테스트 및 버그 수정
-  - [ ] 게임 전체 플로우 테스트 (방 생성 → 입장 → 게임 진행 → 종료)
-  - [ ] 멀티플레이 동시 접속 테스트
-  - [ ] 싱글플레이 모드 테스트
-  - [ ] 버그 수정 및 에러 핸들링 개선
-- [ ] 밸런스 조정
-  - [ ] 스탯 효과 밸런스 조정
-  - [ ] 이벤트 난이도 조정
-  - [ ] 승리 조건 조정
+**API 엔드포인트 추가** (`server/src/index.ts`)
+```typescript
+// GET /api/teacher/dashboard/:roomCode/analytics
+app.get('/api/teacher/dashboard/:roomCode/analytics', (req, res) => {
+  const { roomCode } = req.params;
+  const room = gameManager.rooms.get(roomCode);
+
+  const analytics = {
+    students: [], // PlayerProgress[]
+    summary: {
+      totalStudents: number,
+      averageAccuracy: number,
+      averagePlayTime: number,
+      mostActiveNation: Nation,
+    },
+    timeline: [], // 시간대별 활동 데이터
+  };
+
+  res.json(analytics);
+});
+```
+
+**작업 시간**: 3일
+
+---
+
+#### 3. 교육과정 연계 문서 작성
+**우선순위**: 🔴 최우선
+
+**새 파일 생성**: `docs/curriculum-mapping.md`
+
+```markdown
+# 교육과정 연계 문서
+
+## 1. 성취기준 매핑
+
+### 중학교 역사①
+**성취기준**: [9역01-03]
+- 삼국 및 가야의 성립과 발전 과정을 파악하고, 삼국 간의 항쟁 과정을 이해한다.
+
+**게임 내 구현**:
+- 국가 선택 단계에서 삼국의 건국 배경과 특징 학습
+- 턴별 이벤트를 통해 정치·경제·사회·문화 발전 과정 체험
+- 외교 및 전투 시스템으로 삼국 간 관계 이해
+- AI 어드바이저의 역사적 맥락 설명
+
+**연계 활동**:
+- 게임 전: 삼국시대 기본 개념 학습
+- 게임 중: 역사적 사건 의사결정 체험
+- 게임 후: 선택과 결과에 대한 역사적 고찰
+
+### 고등학교 한국사
+**성취기준**: [10한사01-02]
+- 삼국의 형성과 발전 과정을 이해하고, 고대 국가의 통치 체제와 대외 관계를 탐구한다.
+
+...
+
+## 2. 핵심 역량 연계
+
+### 역사적 사고력
+- **게임 요소**: 역사 이벤트 선택 시 원인과 결과 분석
+- **측정 방법**: 정답률, 의사결정 패턴 분석
+
+### 비판적 사고력
+- **게임 요소**: 다양한 선택지 비교, AI 어드바이저 활용
+- **측정 방법**: 선택 시간, 어드바이저 활용 빈도
+
+### 의사소통 역량
+- **게임 요소**: 팀 채팅, 외교 협상
+- **측정 방법**: 채팅 참여도, 외교 활동 횟수
+
+### 공동체 역량
+- **게임 요소**: 멀티플레이어 협력, 동맹 체결
+- **측정 방법**: 협업 선택 빈도, 팀 승률
+
+### 문제해결력
+- **게임 요소**: 국가 위기 상황 대응
+- **측정 방법**: 위기 상황 극복률, 자원 관리 효율성
+
+### 창의적 사고력
+- **게임 요소**: 다양한 전략 수립
+- **측정 방법**: 전략 다양성 지수
+
+## 3. 단원별 학습 목표
+
+[상세 내용...]
+```
+
+**작업 시간**: 1일
+
+---
+
+### Week 2 (Day 8-14)
+
+#### 4. 수업 지도안 작성
+**우선순위**: 🔴 최우선
+
+**새 파일 생성**: `docs/lesson-plans.md`
+
+```markdown
+# 역사전쟁: 삼국시대 수업 지도안
+
+## 전체 구성
+- 대상: 중학교 2학년
+- 교과: 역사
+- 단원: 삼국의 성립과 발전
+- 차시: 8차시 (4주)
+- 학습 형태: 모둠별 게임 기반 학습
+
+## 1-2차시: 삼국시대 기본 이해
+
+### 학습 목표
+- 고구려, 백제, 신라의 건국과 초기 발전 과정을 설명할 수 있다.
+- 각 국가의 지리적 특징과 정치 체제를 비교할 수 있다.
+
+### 수업 흐름
+
+**도입 (10분)**
+- 삼국시대 개념 소개
+- 게임 소개 및 규칙 설명
+- 모둠 편성 (3-4명)
+
+**전개 (30분)**
+- 국가 선택 및 게임 시작
+- 초기 10턴 플레이
+- 각 국가의 특징 체험
+- 교사 순회 지도
+
+**정리 (10분)**
+- 각 모둠 발표: 선택한 국가의 특징
+- 삼국 비교 토론
+- 학습지 작성
+
+### 평가 요소
+- 게임 참여도 (20%)
+- 의사결정 정확성 (30%)
+- 발표 및 토론 (30%)
+- 학습지 (20%)
+
+### 준비물
+- 태블릿 또는 PC (모둠당 1대)
+- 학습지
+- PPT 자료
+
+[3-4차시, 5-6차시, 7-8차시 상세 내용...]
+```
+
+**작업 시간**: 2일
+
+---
+
+#### 5. 사용자 매뉴얼 작성
+**우선순위**: 🟡 필수
+
+**교사용 가이드**: `docs/teacher-guide.md`
+**학생용 가이드**: `docs/student-guide.md`
+
+각 20-30페이지 분량, 스크린샷 포함
+
+**작업 시간**: 3일
+
+---
+
+#### 6. 즉각적 피드백 시스템 기초
+**우선순위**: 🟡 필수
+
+**클라이언트 구현**: `client/src/components/game/FeedbackModal.tsx`
+
+```typescript
+interface FeedbackMessage {
+  eventId: string;
+  choiceId: string;
+  isCorrect: boolean;
+  message: string;
+  historicalContext: string;
+  suggestion?: string;
+}
+
+// 피드백 메시지 데이터베이스 (100개)
+const feedbackMessages: Record<string, FeedbackMessage> = {
+  'goguryeo_expansion_war': {
+    eventId: 'goguryeo_expansion_war',
+    choiceId: 'preemptive_strike',
+    isCorrect: false,
+    message: '선제공격은 신중해야 합니다!',
+    historicalContext: '고구려는 광개토대왕 시기에 영토를 크게 확장했지만, 무분별한 전쟁은 국력 소모를 가져왔습니다.',
+    suggestion: '외교적 해결을 먼저 시도하거나, 충분한 군사력을 확보한 후 진행하세요.',
+  },
+  // ... 100개 이상의 피드백 메시지
+};
+```
+
+**EventModal.tsx 수정**
+- 선택 직후 피드백 표시
+- 역사적 맥락 설명
+- 다음 행동 제안
+
+**작업 시간**: 2일
+
+---
+
+### Phase 1 완료 체크리스트
+
+- [ ] 학습 데이터 수집 시스템 구현 및 테스트
+- [ ] 교사용 대시보드 v1 완성
+- [ ] 교육과정 연계 문서 작성
+- [ ] 수업 지도안 8차시 작성
+- [ ] 교사용/학생용 매뉴얼 작성
+- [ ] 즉각적 피드백 시스템 100개 메시지 작성
+- [ ] 전체 기능 통합 테스트
+- [ ] 버그 수정
+
+---
+
+## Phase 2: 경쟁력 강화 기능 (4주)
+
+> **목표**: 대회 경쟁력을 높이는 차별화 기능 구현
+> **기간**: 4주 (Day 15-42)
+
+### Week 3-4 (Day 15-28)
+
+#### 7. 학습 리포트 자동 생성 시스템
+**우선순위**: 🟠 중요
+
+**서버 측 구현**: `server/src/reportGenerator.ts`
+
+```typescript
+export interface LearningReport {
+  // 기본 정보
+  student: {
+    name: string;
+    nation: Nation;
+    className: string;
+  };
+
+  // 게임 요약
+  summary: {
+    playDate: string;
+    totalPlayTime: string;
+    completedTurns: number;
+    finalScore: number;
+  };
+
+  // 학습 성과
+  performance: {
+    accuracyRate: number;
+    correctChoices: number;
+    incorrectChoices: number;
+    grade: 'A+' | 'A' | 'B+' | 'B' | 'C+' | 'C' | 'D' | 'F';
+  };
+
+  // 역량 분석
+  competencies: {
+    historicalThinking: number; // 0-100
+    criticalThinking: number;
+    communication: number;
+    collaboration: number;
+    problemSolving: number;
+    creativity: number;
+  };
+
+  // 활동 분석
+  activities: {
+    battleCount: number;
+    diplomacyCount: number;
+    chatCount: number;
+    advisorUseCount: number;
+  };
+
+  // 강점/약점
+  strengths: string[];
+  weaknesses: string[];
+
+  // 개선 방안
+  suggestions: string[];
+
+  // 주요 의사결정 이력
+  keyDecisions: Array<{
+    turn: number;
+    event: string;
+    choice: string;
+    isCorrect: boolean;
+    impact: string;
+  }>;
+
+  // 교사 코멘트 (선택)
+  teacherComment?: string;
+}
+
+export class ReportGenerator {
+  generateReport(playerId: string): LearningReport
+  exportToPDF(report: LearningReport): Buffer
+  exportToExcel(reports: LearningReport[]): Buffer // 학급 전체
+}
+```
+
+**PDF 생성 라이브러리**: `pdfkit` 사용
+
+**API 엔드포인트**
+```typescript
+// GET /api/teacher/report/:roomCode/:playerId
+app.get('/api/teacher/report/:roomCode/:playerId', (req, res) => {
+  const report = reportGenerator.generateReport(req.params.playerId);
+  res.json(report);
+});
+
+// GET /api/teacher/report/:roomCode/:playerId/pdf
+app.get('/api/teacher/report/:roomCode/:playerId/pdf', (req, res) => {
+  const report = reportGenerator.generateReport(req.params.playerId);
+  const pdfBuffer = reportGenerator.exportToPDF(report);
+  res.setHeader('Content-Type', 'application/pdf');
+  res.send(pdfBuffer);
+});
+
+// GET /api/teacher/report/:roomCode/excel
+app.get('/api/teacher/report/:roomCode/excel', (req, res) => {
+  const reports = reportGenerator.generateRoomReports(req.params.roomCode);
+  const excelBuffer = reportGenerator.exportToExcel(reports);
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.send(excelBuffer);
+});
+```
+
+**클라이언트 UI**: 대시보드에 "리포트 다운로드" 버튼 추가
+
+**작업 시간**: 5일
+
+---
+
+#### 8. 역사 자료실 구축
+**우선순위**: 🟠 중요
+
+**새 파일**: `client/src/data/historicalResources.ts`
+
+```typescript
+export interface HistoricalTimeline {
+  year: number;
+  events: Array<{
+    nation: Nation | 'all';
+    title: string;
+    description: string;
+    significance: string;
+  }>;
+}
+
+export interface HistoricalFigure {
+  id: string;
+  name: string;
+  nation: Nation;
+  period: string;
+  title: string; // 직위
+  achievements: string[];
+  imageUrl?: string;
+  biography: string;
+}
+
+export interface CulturalHeritage {
+  id: string;
+  name: string;
+  nation: Nation;
+  type: 'architecture' | 'artifact' | 'document' | 'tomb';
+  period: string;
+  location: string;
+  description: string;
+  significance: string;
+  imageUrl?: string;
+}
+
+export interface HistoricalTerm {
+  id: string;
+  term: string;
+  category: 'politics' | 'military' | 'economy' | 'culture' | 'society';
+  definition: string;
+  example: string;
+  relatedTerms: string[];
+}
+
+// 데이터
+export const timeline: HistoricalTimeline[] = [...]; // 50개 이상
+export const figures: HistoricalFigure[] = [...]; // 30명 이상
+export const heritage: CulturalHeritage[] = [...]; // 30개 이상
+export const terms: HistoricalTerm[] = [...]; // 100개 이상
+```
+
+**새 페이지**: `client/src/pages/HistoricalResourcesPage.tsx`
+- 탭: 연표 / 인물 / 문화유산 / 용어사전
+- 검색 기능
+- 필터링 (국가별, 시대별, 카테고리별)
+- 상세 모달
+
+**게임 내 통합**:
+- 이벤트 모달에 "자세히 알아보기" 버튼
+- 관련 인물/사건/용어 자동 링크
+- 툴팁으로 용어 설명 표시
+
+**작업 시간**: 5일
+
+---
+
+#### 9. 역사 지도 및 타임라인 시각화
+**우선순위**: 🟡 중요
+
+**지도 컴포넌트**: `client/src/components/resources/InteractiveMap.tsx`
+- 삼국의 영토 변화 애니메이션
+- 턴별 영토 표시
+- 주요 전투 위치 마커
+- 수도 및 주요 도시 표시
+
+**라이브러리**: `react-simple-maps` 또는 `leaflet`
+
+**타임라인 컴포넌트**: `client/src/components/resources/TimelineVisualization.tsx`
+- 가로 스크롤 타임라인
+- 주요 사건 표시
+- 클릭 시 상세 정보
+
+**작업 시간**: 4일
+
+---
+
+### Week 5-6 (Day 29-42)
+
+#### 10. 성취 배지 시스템
+**우선순위**: 🟡 중요
+
+**배지 타입**: `client/src/types/achievements.ts`
+
+```typescript
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string; // emoji or icon name
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  condition: {
+    type: 'event' | 'stat' | 'streak' | 'combo';
+    requirement: any;
+  };
+}
+
+// 배지 예시
+export const achievements: Achievement[] = [
+  // 평화 배지
+  {
+    id: 'peaceful_diplomat',
+    name: '평화 외교가',
+    description: '전쟁 없이 30턴 생존',
+    icon: '🏛️',
+    rarity: 'rare',
+    condition: { type: 'stat', requirement: { turnsWithoutWar: 30 } },
+  },
+
+  // 전투 배지
+  {
+    id: 'war_strategist',
+    name: '전략가',
+    description: '5번 연속 전투 승리',
+    icon: '⚔️',
+    rarity: 'epic',
+    condition: { type: 'streak', requirement: { winStreak: 5 } },
+  },
+
+  // 학습 배지
+  {
+    id: 'historian',
+    name: '역사학자',
+    description: '모든 이벤트 경험',
+    icon: '📜',
+    rarity: 'legendary',
+    condition: { type: 'event', requirement: { uniqueEvents: 50 } },
+  },
+
+  // 협력 배지
+  {
+    id: 'master_negotiator',
+    name: '협상의 달인',
+    description: '외교 협정 10회 체결',
+    icon: '🤝',
+    rarity: 'rare',
+    condition: { type: 'stat', requirement: { diplomacyCount: 10 } },
+  },
+
+  // ... 총 30개 이상
+];
+```
+
+**배지 획득 시스템**: `server/src/achievementManager.ts`
+- 실시간 조건 체크
+- 배지 획득 알림 전송
+- 배지 컬렉션 저장
+
+**UI 컴포넌트**:
+- 배지 획득 토스트 알림
+- 마이페이지에 배지 컬렉션 표시
+- 배지 진행도 표시
+
+**작업 시간**: 3일
+
+---
+
+#### 11. 오답 노트 기능
+**우선순위**: 🟡 중요
+
+**데이터 구조**: `server/src/types.ts`
+
+```typescript
+export interface MistakeNote {
+  playerId: string;
+  mistakes: Array<{
+    turn: number;
+    eventId: string;
+    eventTitle: string;
+    wrongChoiceId: string;
+    wrongChoiceText: string;
+    correctChoiceId: string;
+    correctChoiceText: string;
+    explanation: string;
+    timestamp: number;
+    reviewed: boolean;
+    retryCount: number;
+  }>;
+}
+```
+
+**클라이언트 페이지**: `client/src/pages/MistakeNotePage.tsx`
+- 틀린 문제 목록
+- 정답 및 해설 표시
+- "다시 도전" 버튼 (같은 상황 재현)
+- 복습 완료 체크
+
+**게임 내 통합**:
+- 게임 종료 후 "오답 노트 보기" 버튼
+- 재도전 시 같은 이벤트 발생
+
+**작업 시간**: 3일
+
+---
+
+#### 12. 교육적 효과 검증 (파일럿 테스트)
+**우선순위**: 🔴 최우선
+
+**테스트 계획**:
+- 대상: 중학교 2학년 3개 학급 (90명)
+- 기간: 4주 (8차시)
+- 측정 도구:
+  - 사전-사후 검사 (역사 지식)
+  - 학습 동기 설문조사
+  - 수업 만족도 조사
+  - 교사 인터뷰
+  - 학생 인터뷰
+
+**데이터 수집**:
+- 게임 플레이 데이터 자동 수집
+- 설문조사 응답
+- 관찰 일지
+
+**분석 및 리포트 작성**:
+- 통계 분석 (SPSS)
+- 결과 정리 및 그래프 작성
+- 효과 검증 보고서 작성
+
+**작업 시간**: 5일 (테스트 기간 제외)
+
+---
+
+### Phase 2 완료 체크리스트
+
+- [ ] 학습 리포트 자동 생성 (PDF/Excel)
+- [ ] 역사 자료실 구축 (연표, 인물, 문화유산, 용어사전)
+- [ ] 역사 지도 및 타임라인 시각화
+- [ ] 성취 배지 시스템 (30개 이상)
+- [ ] 오답 노트 기능
+- [ ] 파일럿 테스트 실시 및 결과 분석
+- [ ] 버그 수정 및 개선
+
+---
+
+## Phase 3: 차별화 기능 (8주)
+
+> **목표**: 대회 최우수상을 위한 차별화된 기능 구현
+> **기간**: 8주 (Day 43-98)
+
+### Week 7-10 (Day 43-70)
+
+#### 13. AI 기반 맞춤형 학습
+**우선순위**: 🟠 중요
+
+**AI 어드바이저 고도화** (`server/src/aiAdvisor.ts`)
+
+현재 기능 확장:
+```typescript
+export interface AIAdvisorRequest {
+  playerId: string;
+  playerName: string;
+  nation: Nation;
+  currentStats: NationStats;
+  recentEvents: EventHistory[];
+  learningProgress: {
+    weakAreas: string[]; // 약한 영역 (군사, 경제 등)
+    strengths: string[];
+    accuracyRate: number;
+  };
+  question: string;
+}
+
+export interface AIAdvisorResponse {
+  answer: string;
+
+  // 맞춤형 학습 가이드
+  personalizedTips: string[];
+
+  // 추천 전략
+  recommendedStrategy: {
+    shortTerm: string;
+    longTerm: string;
+    alternatives: string[];
+  };
+
+  // 학습 자료 추천
+  recommendedResources: Array<{
+    type: 'timeline' | 'figure' | 'heritage' | 'term';
+    id: string;
+    reason: string;
+  }>;
+
+  // 역사적 맥락
+  historicalContext: string;
+
+  // 현대 교훈
+  modernLesson?: string;
+}
+```
+
+**학습 패턴 분석**:
+- 플레이어의 약점 자동 감지
+- 난이도 자동 조절
+- 맞춤형 이벤트 추천
+
+**작업 시간**: 7일
+
+---
+
+#### 14. 빅데이터 분석 시스템
+**우선순위**: 🟡 선택
+
+**데이터 수집**:
+- 전국 학생들의 플레이 데이터
+- 선택 패턴 분석
+- 학습 효과 데이터
+
+**분석 대시보드**: `client/src/pages/BigDataDashboard.tsx`
+- 전국 평균 통계
+- 인기 전략 순위
+- 국가별 승률 통계
+- 이벤트 난이도 분석
+- 학습 효과가 높은 이벤트 Top 10
+
+**교사용 기능**:
+- "우리 반과 전국 평균 비교" 차트
+- 효과적인 수업 방법 제안
+- 게임 밸런스 개선 제안
+
+**작업 시간**: 7일
+
+---
+
+#### 15. 실생활 연계 학습 콘텐츠
+**우선순위**: 🟡 선택
+
+**현대 교훈 시스템**:
+
+```typescript
+export interface ModernLesson {
+  historicalEvent: string;
+  gameChoice: string;
+  modernConnection: {
+    topic: string; // "국제 관계", "경제 정책" 등
+    example: string; // 현대 사례
+    lesson: string; // 교훈
+    discussion: string[]; // 토론 주제
+  };
+}
+
+// 예시
+const lessons: ModernLesson[] = [
+  {
+    historicalEvent: '동맹국의 배신',
+    gameChoice: '신라가 당나라와 동맹 후 배신당함',
+    modernConnection: {
+      topic: '국제 관계에서의 신뢰',
+      example: '현대 국제 조약 및 동맹 관계 (NATO, UN 등)',
+      lesson: '국제 관계에서 신뢰의 중요성과 자국 이익 추구의 균형',
+      discussion: [
+        '국가 간 신뢰는 어떻게 구축되는가?',
+        '자국 이익과 동맹의 의무가 충돌할 때 어떻게 해야 하는가?',
+      ],
+    },
+  },
+];
+```
+
+**UI 통합**:
+- 게임 종료 후 "현대와의 연결" 페이지
+- 역사 → 현대 비교 차트
+- 토론 주제 제공
+
+**작업 시간**: 5일
+
+---
+
+### Week 11-12 (Day 71-84)
+
+#### 16. 접근성 기능
+**우선순위**: 🟢 선택
+
+**시각 접근성**:
+```typescript
+// 색약 모드
+export type ColorBlindMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia';
+
+// 테마 설정
+export interface AccessibilitySettings {
+  colorBlindMode: ColorBlindMode;
+  highContrast: boolean;
+  fontSize: 'normal' | 'large' | 'xlarge'; // 100%, 125%, 150%
+  reduceMotion: boolean; // 애니메이션 감소
+  screenReader: boolean; // 스크린 리더 지원
+}
+```
+
+**구현**:
+- 색약 모드 CSS 필터 적용
+- 고대비 테마 추가
+- 텍스트 크기 조절
+- ARIA 레이블 추가
+- 애니메이션 비활성화 옵션
+
+**조작 접근성**:
+- 모든 기능에 키보드 단축키 추가
+- 탭 네비게이션 순서 최적화
+- 포커스 표시 명확화
+
+**작업 시간**: 5일
+
+---
+
+#### 17. 오프라인 모드 (PWA)
+**우선순위**: 🟢 선택
+
+**PWA 설정**:
+```typescript
+// vite.config.ts
+import { VitePWA } from 'vite-plugin-pwa';
+
+export default defineConfig({
+  plugins: [
+    VitePWA({
+      registerType: 'autoUpdate',
+      manifest: {
+        name: '역사전쟁: 삼국시대',
+        short_name: '삼국시대',
+        description: '게임으로 배우는 역사',
+        theme_color: '#f59e0b',
+        icons: [
+          {
+            src: 'icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: 'icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+        ],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/api\./,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              networkTimeoutSeconds: 10,
+            },
+          },
+        ],
+      },
+    }),
+  ],
+});
+```
+
+**오프라인 기능**:
+- 싱글플레이어 모드만 오프라인 지원
+- 로컬 스토리지에 진행 상황 저장
+- 온라인 복귀 시 자동 동기화
+
+**작업 시간**: 4일
+
+---
+
+#### 18. 성능 최적화 및 저사양 PC 지원
+**우선순위**: 🟡 중요
+
+**최적화 작업**:
+- 코드 스플리팅 (React.lazy)
+- 이미지 최적화 (WebP, lazy loading)
+- 번들 사이즈 줄이기
+- 메모리 누수 제거
+- 렌더링 최적화 (useMemo, useCallback)
+
+**저사양 모드**:
+```typescript
+export interface PerformanceSettings {
+  quality: 'low' | 'medium' | 'high';
+  animations: boolean;
+  particleEffects: boolean;
+  shadows: boolean;
+}
+
+// 자동 감지
+export function detectPerformance(): PerformanceSettings {
+  const memory = (performance as any).memory;
+  const cores = navigator.hardwareConcurrency;
+
+  if (cores < 4 || (memory && memory.jsHeapSizeLimit < 2000000000)) {
+    return { quality: 'low', animations: false, particleEffects: false, shadows: false };
+  }
+  // ...
+}
+```
+
+**작업 시간**: 4일
+
+---
+
+### Phase 3 완료 체크리스트
+
+- [ ] AI 기반 맞춤형 학습 구현
+- [ ] 빅데이터 분석 시스템 구축
+- [ ] 실생활 연계 학습 콘텐츠 (30개)
+- [ ] 접근성 기능 (색약 모드, 키보드 단축키 등)
+- [ ] 오프라인 모드 (PWA)
+- [ ] 성능 최적화 및 저사양 PC 지원
+- [ ] 최종 통합 테스트
+- [ ] 보안 점검
+- [ ] 버그 수정
+
+---
+
+## 기술 스택 및 아키텍처
+
+### Frontend
+```
+React 18.3.1
+├── TypeScript 5.6.2
+├── Vite 5.4.10
+├── TailwindCSS 4.0.0
+├── Framer Motion 11.0.0
+├── Socket.io-client 4.8.1
+├── Zustand 4.5.7
+├── React Router 6.20.0
+└── Lucide React (icons)
+```
+
+### Backend
+```
+Node.js + Express 4.18.2
+├── TypeScript 5.3.2
+├── Socket.io 4.7.2
+├── Google Generative AI 0.24.1
+└── UUID 9.0.1
+```
+
+### 새로 추가할 라이브러리
+
+**Phase 1**
+- 없음 (기존 기술 스택 활용)
+
+**Phase 2**
+```bash
+# 서버
+npm install pdfkit @types/pdfkit
+npm install exceljs
+
+# 클라이언트
+npm install react-simple-maps
+npm install chart.js react-chartjs-2
+npm install date-fns
+```
+
+**Phase 3**
+```bash
+# PWA
+npm install -D vite-plugin-pwa
+
+# 성능
+npm install -D vite-plugin-compression
+npm install -D rollup-plugin-visualizer
+```
+
+### 데이터베이스
+
+현재는 인메모리 저장소 사용. Phase 2부터 영구 저장소 필요 시:
+
+**옵션 1**: SQLite (간단, 파일 기반)
+```bash
+npm install better-sqlite3 @types/better-sqlite3
+```
+
+**옵션 2**: MongoDB (확장성 높음)
+```bash
+npm install mongodb mongoose
+```
+
+**추천**: 초기에는 SQLite, 확장 시 MongoDB로 마이그레이션
+
+---
+
+## 일정 및 마일스톤
+
+### 전체 일정표
+
+```
+Week 1-2  (Phase 1)  ████████████████░░░░░░░░░░░░░░░░  출품 필수 기능
+Week 3-4  (Phase 2)  ░░░░░░░░░░░░░░░░████████░░░░░░░░  리포트 & 자료실
+Week 5-6  (Phase 2)  ░░░░░░░░░░░░░░░░░░░░░░░░████████  배지 & 오답노트
+Week 7-10 (Phase 3)  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░████  AI & 빅데이터
+Week 11-12(Phase 3)  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░██  접근성 & 최적화
+Week 13-14          ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  최종 준비
+```
+
+### 마일스톤
+
+**M1 - Day 7**: 학습 데이터 수집 시스템 완료
+- [ ] LearningAnalytics 클래스 구현
+- [ ] 모든 게임 이벤트에 로그 통합
+- [ ] API 엔드포인트 구현
+- [ ] 테스트 완료
+
+**M2 - Day 14**: Phase 1 완료
+- [ ] 대시보드 v1 완성
+- [ ] 교육과정 문서 작성
+- [ ] 수업 지도안 작성
+- [ ] 매뉴얼 작성
+- [ ] 피드백 시스템 기초
+
+**M3 - Day 28**: 리포트 & 자료실 완료
+- [ ] PDF/Excel 리포트 생성
+- [ ] 역사 자료실 100개 항목
+- [ ] 지도 및 타임라인
+- [ ] 파일럿 테스트 계획 수립
+
+**M4 - Day 42**: Phase 2 완료
+- [ ] 배지 시스템 30개
+- [ ] 오답 노트 기능
+- [ ] 파일럿 테스트 실시 및 결과 분석
+- [ ] 중간 버그 수정
+
+**M5 - Day 70**: AI & 빅데이터 완료
+- [ ] AI 어드바이저 고도화
+- [ ] 빅데이터 분석 대시보드
+- [ ] 실생활 연계 콘텐츠 30개
+
+**M6 - Day 84**: Phase 3 완료
+- [ ] 접근성 기능 전체
+- [ ] 오프라인 모드 (PWA)
 - [ ] 성능 최적화
-  - [ ] 30명 동접 대비 최적화
-  - [ ] Socket.io 이벤트 최적화
-  - [ ] 렌더링 성능 개선
-- [ ] UI/UX 개선
-  - [ ] 사용성 개선
-  - [ ] 반응형 디자인 개선
-  - [ ] 접근성 개선
+- [ ] 보안 점검
+
+**M7 - Day 98**: 출품 준비 완료
+- [ ] 최종 통합 테스트
+- [ ] 문서 최종 검토
+- [ ] 표절 검사 (카피킬러 20% 미만)
+- [ ] 제출 자료 패키징
 
 ---
 
-### ⏳ 예정된 작업
+## 일일 개발 목표 (예시)
 
-#### Week 5: 외교 및 전투
-- [ ] 실시간 채팅 시스템 개선 (팀 내/국가 간/외교 채널 분리)
-- [ ] 동맹/적대 시스템 구현 (외교 패널, 동맹 제안/수락)
-- [ ] 간소화 전투 시스템 (전투 이벤트, 전투 결과 계산)
-- [ ] 역사 이벤트 30개 추가
+### Week 1
 
-#### Week 6: 게임 완성
-- [ ] 승리 조건 구현 (국력 기준, 특수 조건)
-- [ ] 결과 화면 개선 (역사 비교, 타임라인)
-- [ ] AI 조언자 연동 (Gemini API)
+**Day 1 (월)**
+- [ ] 08:00-09:00: LearningLog 타입 정의
+- [ ] 09:00-12:00: LearningAnalytics 클래스 구현
+- [ ] 13:00-15:00: gameManager.ts에 로그 수집 통합
+- [ ] 15:00-17:00: 로그 저장 테스트
+- [ ] 17:00-18:00: 코드 리뷰 및 리팩토링
 
-#### Week 6: 게임 완성
-- [ ] 승리 조건 구현
-- [ ] 결과 화면 개선
-- [ ] AI 조언자 연동 (Gemini API)
+**Day 2 (화)**
+- [ ] 08:00-10:00: API 엔드포인트 구현
+- [ ] 10:00-12:00: 통계 계산 로직 구현
+- [ ] 13:00-15:00: 단위 테스트 작성
+- [ ] 15:00-17:00: 통합 테스트
+- [ ] 17:00-18:00: 버그 수정
 
-#### Week 7: 테스트 및 안정화
-- [ ] 내부 테스트
-- [ ] 밸런스 조정
-- [ ] 성능 최적화
+**Day 3 (수)**
+- [ ] 08:00-10:00: PlayerProgress 타입 정의
+- [ ] 10:00-12:00: 프론트엔드 API 연동
+- [ ] 13:00-15:00: 대시보드 테이블 컴포넌트
+- [ ] 15:00-17:00: 차트 컴포넌트 (Chart.js)
+- [ ] 17:00-18:00: 스타일링
 
-#### Week 8: 마무리
-- [ ] 최종 버그 수정
-- [ ] 사용자 매뉴얼
-- [ ] 배포
-
----
-
-### 📁 생성된 파일 목록
-
-```
-history/
-├── client/                    # 프론트엔드
-│   ├── public/
-│   │   ├── fonts/            # 호국체 폰트
-│   │   └── images/           # 국가 SVG 이미지
-│   ├── src/
-│   │   ├── components/       # UI 컴포넌트
-│   │   ├── pages/            # 페이지
-│   │   ├── data/             # 이벤트/국가 데이터
-│   │   ├── types/            # TypeScript 타입
-│   │   └── utils/            # 유틸리티
-│   │       └── gameMode.ts   # 게임 모드 감지 유틸리티
-│   └── package.json
-├── server/                    # 백엔드
-│   ├── src/
-│   │   ├── gameManager.ts    # 게임 로직 관리
-│   │   ├── index.ts          # Express + Socket.io 서버
-│   │   └── types.ts           # 타입 정의
-│   └── package.json
-├── plan.md                    # 개발 계획서
-└── story.md                   # 역사 시나리오 20개
-```
+[계속...]
 
 ---
 
+## 품질 관리
+
+### 코드 품질
+- [ ] ESLint 규칙 준수
+- [ ] TypeScript strict 모드
+- [ ] 코드 리뷰 (AI 도구 활용)
+- [ ] 리팩토링 (중복 코드 제거)
+
+### 테스트
+- [ ] 단위 테스트 (주요 로직)
+- [ ] 통합 테스트 (API)
+- [ ] E2E 테스트 (주요 시나리오)
+- [ ] 사용성 테스트 (교사, 학생)
+
+### 보안
+- [ ] XSS 방어
+- [ ] SQL Injection 방어 (DB 사용 시)
+- [ ] CORS 설정
+- [ ] 입력 검증
+- [ ] 개인정보 보호
+
+### 성능
+- [ ] 번들 사이즈 < 2MB
+- [ ] 초기 로딩 시간 < 3초
+- [ ] 메모리 사용량 < 500MB
+- [ ] 저사양 PC 테스트 (4GB RAM, 듀얼코어)
+
 ---
 
-## 📝 최근 변경사항 (2024년 12월)
+## 리스크 관리
 
-### 싱글플레이 AI 대전 모드 개선
-- **명칭 변경**: "팀 모드" → "AI 대전"
-- **AI 플레이어 자동 배치**: 사용자가 선택한 국가 외 나머지 두 국가에 각각 1명씩 자동 배치
-- **게임 시작 권한**: 호스트가 아닌 사용자(플레이어)에게 게임 시작 권한 부여
-- **카운트다운 화면**: 게임 시작 전 5초 카운트다운 추가
-- **이벤트 필터링**: AI 대전 모드에서 선택한 국가의 이벤트만 표시 (연도 순서대로)
-- **코드 분리**: 게임 모드 감지 유틸리티 함수 추가 (`gameMode.ts`)
+### 주요 리스크
 
-### 멀티플레이 모드 개선
-- **AI 기능 제거**: 멀티플레이 모드에서 AI 플레이어 추가/제거 기능 완전 제거
-- **자동 정리**: 멀티플레이 모드 진입 시 기존 AI 플레이어 자동 제거
-- **방 코드 방식**: 멀티플레이 모드는 고정된 'MAIN' 방 코드 사용
+**R1: 개발 일정 지연**
+- 확률: 중 (40%)
+- 영향: 높음
+- 대응: Phase 3 일부 기능 축소, 우선순위 조정
 
-### 버그 수정
-- **채팅 중복 메시지**: Socket.io 리스너 중복 등록 문제 해결
+**R2: 파일럿 테스트 섭외 실패**
+- 확률: 중 (30%)
+- 영향: 높음
+- 대응: 대안 학교 사전 섭외, 온라인 테스트 병행
+
+**R3: 기술적 문제 (버그, 성능)**
+- 확률: 중 (50%)
+- 영향: 중
+- 대응: 충분한 테스트 기간 확보, 코드 리뷰 강화
+
+**R4: 표절 검사 실패**
+- 확률: 낮음 (10%)
+- 영향: 매우 높음
+- 대응: 모든 콘텐츠 자체 제작, 참고 문헌 명확히 표기
 
 ---
 
-*마지막 업데이트: 2024년 12월*
+## 성공 지표 (KPI)
 
+### 개발 완료도
+- [ ] Phase 1 기능 100% 완료
+- [ ] Phase 2 기능 80% 이상 완료
+- [ ] Phase 3 기능 50% 이상 완료
+
+### 문서화
+- [ ] 교육과정 연계 문서 완성
+- [ ] 수업 지도안 8차시 완성
+- [ ] 매뉴얼 (교사/학생) 완성
+- [ ] 개발 문서 완성
+
+### 교육적 효과
+- [ ] 학습 동기 20% 이상 증가
+- [ ] 역사 지식 이해도 30% 이상 향상
+- [ ] 수업 만족도 4.0/5.0 이상
+- [ ] 협업 능력 향상 긍정 응답 80% 이상
+
+### 기술적 품질
+- [ ] 버그 심각도 높음 0건
+- [ ] 성능 목표 달성 (로딩 < 3초)
+- [ ] 접근성 WCAG 2.1 AA 수준
+- [ ] 브라우저 호환성 (Chrome, Safari, Edge)
+
+---
+
+## 최종 제출 체크리스트
+
+### 필수 문서
+- [ ] 연구 계획서 (10-20페이지)
+- [ ] 교육과정 연계 문서 (5-10페이지)
+- [ ] 수업 지도안 8차시 (20-30페이지)
+- [ ] 교사용 매뉴얼 (20-30페이지)
+- [ ] 학생용 매뉴얼 (15-20페이지)
+- [ ] 교육적 효과 검증 보고서 (10-15페이지)
+- [ ] 개발 문서 (10-15페이지)
+- [ ] 카피킬러 검사 결과 (20% 미만)
+
+### 필수 기능
+- [ ] 학습 데이터 수집 시스템
+- [ ] 교사용 학습 분석 대시보드
+- [ ] 학생별 학습 리포트 생성 (PDF)
+- [ ] 역사 자료실 (최소 50개 항목)
+- [ ] 피드백 시스템 (100개 메시지)
+- [ ] AI 어드바이저 고도화
+
+### 기술적 요구사항
+- [ ] Chrome, Safari, Edge 테스트 완료
+- [ ] 모바일/태블릿 반응형 확인
+- [ ] 저사양 PC 성능 테스트 (4GB RAM)
+- [ ] 보안 취약점 점검 완료
+- [ ] 개인정보 보호 조치 완료
+
+### 사용성 테스트
+- [ ] 교사 5명 이상 테스트
+- [ ] 학생 30명 이상 파일럿 테스트
+- [ ] 피드백 반영 및 개선
+- [ ] 모든 버그 수정 완료
+
+### 제출 자료
+- [ ] 소스 코드 (GitHub 또는 ZIP)
+- [ ] 설치 가이드
+- [ ] 데모 영상 (5-10분)
+- [ ] PPT 발표 자료 (20-30장)
+- [ ] 스크린샷 (10-20장)
+
+---
+
+## 개발 팀 역할 분담
+
+### 개발자 1 (백엔드 중심)
+- 학습 데이터 수집 시스템
+- 리포트 생성 시스템
+- API 엔드포인트
+- AI 어드바이저 고도화
+
+### 개발자 2 (프론트엔드 중심)
+- 대시보드 UI/UX
+- 역사 자료실 페이지
+- 성취 배지 시스템
+- 오답 노트 UI
+
+### 교육 전문가
+- 교육과정 연계 문서
+- 수업 지도안 작성
+- 교육적 효과 검증
+- 콘텐츠 검수
+
+### 디자이너
+- UI/UX 개선
+- 아이콘 및 일러스트
+- 배지 디자인
+- 발표 자료 디자인
+
+---
+
+## 참고 자료
+
+### 개발 문서
+- [React 공식 문서](https://react.dev/)
+- [Socket.io 공식 문서](https://socket.io/docs/)
+- [TypeScript 핸드북](https://www.typescriptlang.org/docs/)
+- [TailwindCSS 문서](https://tailwindcss.com/docs)
+
+### 교육 관련
+- [2015 개정 교육과정](https://ncic.go.kr/)
+- [2022 개정 교육과정](https://ncic.go.kr/)
+- [디지털교육연구대회 안내](COMPETITION_GUIDE.md)
+
+### 역사 자료
+- 국사편찬위원회 한국사 데이터베이스
+- 문화재청 문화유산 정보
+- 국립중앙박물관 소장품 정보
+
+---
+
+## 변경 이력
+
+| 날짜 | 버전 | 변경 내용 | 작성자 |
+|------|------|-----------|--------|
+| 2024-12-04 | 1.0 | 최초 작성 | 개발팀 |
+| 2026-01-17 | 1.1 | Phase 0 추가 (문명 참고 게임 기능 강화) | 개발팀 |
+
+---
+
+**다음 업데이트 예정**: Phase 0 완료 후

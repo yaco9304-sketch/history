@@ -9,7 +9,6 @@ import {
   SinglePlayerPage,
   SinglePlayerModeSelectPage,
   SinglePlayerAISetupPage,
-  SinglePlayerAINationSelectPage,
   TutorialPage,
   TeacherDashboardPage,
   MultiplayerCreatePage,
@@ -26,7 +25,7 @@ function App() {
         <Route path="/single" element={<SinglePlayerModeSelectPage />} />
         <Route path="/single/personal" element={<SinglePlayerPage />} />
         <Route path="/single/ai/setup" element={<SinglePlayerAISetupPage />} />
-        <Route path="/single/ai/select" element={<SinglePlayerAINationSelectPage />} />
+        <Route path="/single/ai/select" element={<NationSelectPage mode="singleplayer" backPath="/single" />} />
 
         {/* Tutorial */}
         <Route path="/tutorial" element={<TutorialPage />} />
@@ -42,7 +41,7 @@ function App() {
         <Route path="/multiplayer/create" element={<MultiplayerCreatePage />} />
 
         {/* Join Game - Nation Selection */}
-        <Route path="/select" element={<NationSelectPage />} />
+        <Route path="/select" element={<NationSelectPage mode="multiplayer" backPath="/" />} />
 
         {/* Game Lobby - Waiting Room */}
         <Route path="/lobby/:roomCode" element={<LobbyPage />} />

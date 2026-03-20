@@ -20,6 +20,7 @@ interface EventModalProps {
   roomStatus?: 'waiting' | 'countdown' | 'playing' | 'discussion' | 'voting' | 'finished';
   messages?: ChatMessage[];
   onSendMessage?: (message: string) => void;
+  isSinglePlayerMode?: boolean;
 }
 
 export const EventModal = ({
@@ -35,6 +36,7 @@ export const EventModal = ({
   roomStatus,
   messages = [],
   onSendMessage,
+  isSinglePlayerMode = false,
 }: EventModalProps) => {
   const [selectedChoice, setSelectedChoice] = useState<string | null>(myVote || null);
   const [showAIAdvisor, setShowAIAdvisor] = useState(false);
@@ -175,20 +177,23 @@ export const EventModal = ({
                   </span>
                 )}
               </div>
-              <motion.div
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
-                  timeRemaining <= 10
-                    ? 'bg-red-500/20 text-red-400'
-                    : timeRemaining <= 30
-                    ? 'bg-yellow-500/20 text-yellow-400'
-                    : 'bg-slate-700 text-white'
-                }`}
-                animate={timeRemaining <= 10 ? { scale: [1, 1.05, 1] } : {}}
-                transition={{ repeat: Infinity, duration: 0.5 }}
-              >
-                <Clock className="w-4 h-4" />
-                <span className="font-mono font-bold">{timeRemaining}초</span>
-              </motion.div>
+              {/* 싱글플레이 AI 대전에서는 타이머 숨김 */}
+              {!isSinglePlayerMode && (
+                <motion.div
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
+                    timeRemaining <= 10
+                      ? 'bg-red-500/20 text-red-400'
+                      : timeRemaining <= 30
+                      ? 'bg-yellow-500/20 text-yellow-400'
+                      : 'bg-slate-700 text-white'
+                  }`}
+                  animate={timeRemaining <= 10 ? { scale: [1, 1.05, 1] } : {}}
+                  transition={{ repeat: Infinity, duration: 0.5 }}
+                >
+                  <Clock className="w-4 h-4" />
+                  <span className="font-mono font-bold">{timeRemaining}초</span>
+                </motion.div>
+              )}
             </div>
 
             {/* Content */}
@@ -216,8 +221,8 @@ export const EventModal = ({
                 )}
               </div>
 
-              {/* 토론 단계: 채팅창 표시 */}
-              {isDiscussionPhase ? (
+              {/* 토론 단계: 채팅창 표시 (멀티플레이만) */}
+              {isDiscussionPhase && onSendMessage ? (
                 <div className="mb-6">
                   <div className="bg-stone-800/50 rounded-lg border border-amber-900/30 p-4 mb-4">
                     <h3 className="text-amber-100 font-semibold mb-3 flex items-center gap-2">
@@ -407,7 +412,7 @@ export const EventModal = ({
               )}
 
               {/* Vote Button */}
-              {isDiscussionPhase ? (
+              {isDiscussionPhase && onSendMessage ? (
                 <div className="text-center p-4 rounded-xl bg-blue-500/20 border border-blue-500/30">
                   <MessageCircle className="w-6 h-6 text-blue-400 mx-auto mb-2" />
                   <p className="text-blue-400 font-medium mb-1">

@@ -79,13 +79,17 @@ export const SinglePlayerAISetupPage = () => {
       });
 
       // 4. 방 생성 요청
-      socket.createRoom('싱글플레이어 AI 대전', '개인', {
-        maxTurns: 30,
-        turnDuration: 120,
-        voteDuration: 60,
-        maxPlayersPerTeam: 5,
-        difficulty: 'normal',
-      });
+      socket.createRoom(
+        '싱글플레이어 AI 대전',
+        '개인',
+        {
+          maxTurns: 30,
+          turnDuration: 120,
+          voteDuration: 60,
+          maxPlayersPerTeam: 5,
+          difficulty: 'normal',
+        }
+      );
 
       // 5. 응답 대기
       const room = await roomCreatedPromise;

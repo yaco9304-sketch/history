@@ -41,6 +41,9 @@ export const INITIAL_STATS: Record<string, NationStats> = {
     gold: 1000,
     population: 80000,
     morale: 70,
+    culturePoints: 0,
+    techProgress: 0,
+    peaceTurns: 0,
   },
   baekje: {
     military: 100,
@@ -50,6 +53,9 @@ export const INITIAL_STATS: Record<string, NationStats> = {
     gold: 1200,
     population: 60000,
     morale: 75,
+    culturePoints: 0,
+    techProgress: 0,
+    peaceTurns: 0,
   },
   silla: {
     military: 90,
@@ -59,6 +65,9 @@ export const INITIAL_STATS: Record<string, NationStats> = {
     gold: 800,
     population: 50000,
     morale: 80,
+    culturePoints: 0,
+    techProgress: 0,
+    peaceTurns: 0,
   },
 };
 

@@ -10,7 +10,6 @@ import {
   Users,
   RefreshCw,
   ArrowLeft,
-  Filter,
   BarChart3,
   CheckCircle2,
   XCircle,
@@ -92,7 +91,8 @@ export const TeacherDashboardPage = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [chatFilter, setChatFilter] = useState<'all' | 'public' | 'team' | 'diplomacy'>('all');
+  const [selectedNation, setSelectedNation] = useState<Nation | 'all'>('all');
+  const [groupByEvent, setGroupByEvent] = useState(true); // 기본값을 true로 변경
   const [error, setError] = useState<string | null>(null);
 
   // const { isConnected } = useGameStore();
@@ -182,13 +182,61 @@ export const TeacherDashboardPage = () => {
   // 채팅 메시지 필터링
   const filteredChatMessages = useMemo(() => {
     if (!dashboardData?.chatMessages) return [];
-    
-    if (chatFilter === 'all') {
-      return dashboardData.chatMessages;
+
+    let messages = dashboardData.chatMessages;
+
+    // 국가별 필터링
+    if (selectedNation !== 'all') {
+      messages = messages.filter(msg => msg.team === selectedNation);
     }
-    
-    return dashboardData.chatMessages.filter(msg => msg.type === chatFilter);
-  }, [dashboardData?.chatMessages, chatFilter]);
+
+    return messages;
+  }, [dashboardData?.chatMessages, selectedNation]);
+
+  // 이벤트별로 채팅 그룹화
+  const groupedByEvent = useMemo(() => {
+    if (!groupByEvent || !dashboardData) return null;
+
+    const groups: Record<string, { event: any; messages: ChatMessage[] }> = {};
+
+    // 각 국가의 이벤트 히스토리 가져오기
+    dashboardData.nationProgress.forEach(nation => {
+      if (!nation.progress?.eventHistory) return;
+
+      nation.progress.eventHistory.forEach((event) => {
+        const key = `${event.turn}-${event.eventId}`;
+        if (!groups[key]) {
+          groups[key] = {
+            event,
+            messages: [],
+          };
+        }
+      });
+    });
+
+    // 각 채팅 메시지를 이벤트에 매핑
+    filteredChatMessages.forEach(msg => {
+      // 메시지 시간과 가장 가까운 이벤트 찾기
+      let closestEvent: any = null;
+      let minTimeDiff = Infinity;
+
+      Object.values(groups).forEach(group => {
+        const timeDiff = Math.abs(msg.timestamp - group.event.timestamp);
+        if (timeDiff < minTimeDiff) {
+          minTimeDiff = timeDiff;
+          closestEvent = group;
+        }
+      });
+
+      // 5분 이내의 채팅만 해당 이벤트에 연결
+      if (closestEvent && minTimeDiff < 5 * 60 * 1000) {
+        closestEvent.messages.push(msg);
+      }
+    });
+
+    // 턴 순서대로 정렬
+    return Object.values(groups).sort((a, b) => a.event.turn - b.event.turn);
+  }, [groupByEvent, dashboardData, filteredChatMessages]);
 
   // 국가 색상 가져오기
   const getNationColor = (nation: Nation) => {
@@ -551,93 +599,215 @@ export const TeacherDashboardPage = () => {
 
           {/* 채팅 로그 */}
           <div className="lg:col-span-1">
-            <Card variant="glass" padding="none" className="h-[600px] flex flex-col">
+            <Card variant="glass" padding="none" className="h-[800px] flex flex-col">
               {/* Chat Header */}
-              <div className="p-4 border-b border-amber-900/30 flex items-center justify-between">
-                <h3 className="font-medium text-amber-100 flex items-center gap-2">
-                  <MessageCircle className="w-4 h-4" />
-                  학생 채팅 로그
-                </h3>
-                <div className="flex items-center gap-1">
-                  <Filter className="w-4 h-4 text-amber-200/50" />
-                  <select
-                    value={chatFilter}
-                    onChange={(e) => setChatFilter(e.target.value as any)}
-                    className="bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  >
-                    <option value="all">전체</option>
-                    <option value="public">공개</option>
-                    <option value="team">팀</option>
-                    <option value="diplomacy">외교</option>
-                  </select>
+              <div className="p-4 border-b border-amber-900/30">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-medium text-amber-100 flex items-center gap-2">
+                    <MessageCircle className="w-4 h-4" />
+                    학생 채팅 로그
+                  </h3>
+                </div>
+
+                {/* 필터 */}
+                <div className="space-y-3">
+                  {/* 국가별 탭 */}
+                  <div>
+                    <label className="text-xs text-amber-200/50 mb-1.5 block">국가 선택</label>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => setSelectedNation('all')}
+                        className={`flex-1 px-3 py-2 text-xs font-medium rounded transition-colors ${
+                          selectedNation === 'all'
+                            ? 'bg-amber-500 text-white'
+                            : 'bg-slate-800 text-amber-200/70 hover:bg-slate-700'
+                        }`}
+                      >
+                        전체
+                      </button>
+                      {(['goguryeo', 'baekje', 'silla'] as Nation[]).map((nation) => (
+                        <button
+                          key={nation}
+                          onClick={() => setSelectedNation(nation)}
+                          className={`flex-1 px-3 py-2 text-xs font-medium rounded transition-colors ${
+                            selectedNation === nation
+                              ? nation === 'goguryeo'
+                                ? 'bg-red-600 text-white'
+                                : nation === 'baekje'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-orange-600 text-white'
+                              : 'bg-slate-800 text-amber-200/70 hover:bg-slate-700'
+                          }`}
+                        >
+                          {NATIONS[nation].name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 이벤트별 그룹화 토글 */}
+                  <div className="flex items-center justify-between p-2 rounded bg-slate-800/50">
+                    <span className="text-xs text-amber-200/70">이벤트별로 보기</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={groupByEvent}
+                        onChange={(e) => setGroupByEvent(e.target.checked)}
+                        className="sr-only peer"
+                      />
+                      <div className="w-9 h-5 bg-slate-700 peer-focus:ring-2 peer-focus:ring-amber-400 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                  </div>
                 </div>
               </div>
 
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                {filteredChatMessages.length === 0 ? (
-                  <p className="text-slate-500 text-sm text-center mt-8">채팅 메시지가 없습니다.</p>
-                ) : (
-                  filteredChatMessages.map((msg) => {
-                    const isSystem = msg.type === 'system';
-                    return (
-                      <motion.div
-                        key={msg.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex gap-2"
+                {groupByEvent && groupedByEvent ? (
+                  // 이벤트별 그룹화된 메시지
+                  groupedByEvent.length === 0 ? (
+                    <p className="text-slate-500 text-sm text-center mt-8">채팅 메시지가 없습니다.</p>
+                  ) : (
+                    groupedByEvent.map((group, idx) => (
+                      <div
+                        key={`${group.event.turn}-${group.event.eventId}-${idx}`}
+                        className="border border-amber-900/30 rounded-lg p-3 bg-black/20"
                       >
-                        {!isSystem && (
-                          <div
-                            className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0 ${
-                              msg.team === 'goguryeo'
-                                ? 'bg-red-600'
-                                : msg.team === 'baekje'
-                                ? 'bg-blue-600'
-                                : 'bg-orange-500'
-                            }`}
-                          >
-                            {msg.senderName[0]}
+                        {/* 이벤트 헤더 */}
+                        <div className="mb-3 pb-2 border-b border-amber-900/20">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1">
+                              <h4 className="text-sm font-medium text-amber-100 mb-1">
+                                턴 {group.event.turn}: {group.event.eventTitle}
+                              </h4>
+                              <p className="text-xs text-amber-200/50">
+                                {group.event.year}년 · {group.event.choiceText}
+                              </p>
+                            </div>
+                            {group.event.isHistorical ? (
+                              <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" />
+                            ) : (
+                              <XCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 이벤트 관련 채팅 */}
+                        {group.messages.length === 0 ? (
+                          <p className="text-xs text-amber-200/30 text-center py-2">
+                            이 이벤트 동안 채팅이 없었습니다.
+                          </p>
+                        ) : (
+                          <div className="space-y-2">
+                            {group.messages.map((msg) => {
+                              const isSystem = msg.type === 'system';
+                              return (
+                                <div key={msg.id} className="flex gap-2">
+                                  {!isSystem && (
+                                    <div
+                                      className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] font-medium flex-shrink-0 ${
+                                        msg.team === 'goguryeo'
+                                          ? 'bg-red-600'
+                                          : msg.team === 'baekje'
+                                          ? 'bg-blue-600'
+                                          : 'bg-orange-500'
+                                      }`}
+                                    >
+                                      {msg.senderName[0]}
+                                    </div>
+                                  )}
+                                  <div className="flex-1 min-w-0">
+                                    {!isSystem && (
+                                      <div className="flex items-baseline gap-1.5 mb-0.5">
+                                        <span className={`text-xs font-medium ${getNationColor(msg.team)}`}>
+                                          {msg.senderName}
+                                        </span>
+                                        <span className="text-[10px] text-slate-500">
+                                          {new Date(msg.timestamp).toLocaleTimeString('ko-KR', {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                          })}
+                                        </span>
+                                      </div>
+                                    )}
+                                    <p className="text-xs text-amber-100/70 break-words">
+                                      {msg.message}
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
-                        <div className="flex-1 min-w-0">
+                      </div>
+                    ))
+                  )
+                ) : (
+                  // 일반 메시지 목록
+                  filteredChatMessages.length === 0 ? (
+                    <p className="text-slate-500 text-sm text-center mt-8">채팅 메시지가 없습니다.</p>
+                  ) : (
+                    filteredChatMessages.map((msg) => {
+                      const isSystem = msg.type === 'system';
+                      return (
+                        <motion.div
+                          key={msg.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex gap-2"
+                        >
                           {!isSystem && (
-                            <div className="flex items-baseline gap-2 mb-1">
-                              <span className={`text-sm font-medium ${getNationColor(msg.team)}`}>
-                                {msg.senderName}
-                              </span>
-                              <span className="text-xs text-amber-200/50">
-                                ({NATIONS[msg.team].name})
-                              </span>
-                              <span className="text-xs text-slate-500">
-                                {new Date(msg.timestamp).toLocaleTimeString('ko-KR', {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
-                              </span>
+                            <div
+                              className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0 ${
+                                msg.team === 'goguryeo'
+                                  ? 'bg-red-600'
+                                  : msg.team === 'baekje'
+                                  ? 'bg-blue-600'
+                                  : 'bg-orange-500'
+                              }`}
+                            >
+                              {msg.senderName[0]}
                             </div>
                           )}
-                          <p
-                            className={`text-sm ${
-                              isSystem
-                                ? 'text-amber-400/80 italic'
-                                : 'text-amber-100/80'
-                            } break-words`}
-                          >
-                            {msg.message}
-                          </p>
-                          {msg.type === 'team' && (
-                            <span className="text-xs text-amber-400/50">(팀 채팅)</span>
-                          )}
-                          {msg.type === 'diplomacy' && msg.target && (
-                            <span className="text-xs text-amber-400/50">
-                              (→ {NATIONS[msg.target].name})
-                            </span>
-                          )}
-                        </div>
-                      </motion.div>
-                    );
-                  })
+                          <div className="flex-1 min-w-0">
+                            {!isSystem && (
+                              <div className="flex items-baseline gap-2 mb-1">
+                                <span className={`text-sm font-medium ${getNationColor(msg.team)}`}>
+                                  {msg.senderName}
+                                </span>
+                                <span className="text-xs text-amber-200/50">
+                                  ({NATIONS[msg.team].name})
+                                </span>
+                                <span className="text-xs text-slate-500">
+                                  {new Date(msg.timestamp).toLocaleTimeString('ko-KR', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                  })}
+                                </span>
+                              </div>
+                            )}
+                            <p
+                              className={`text-sm ${
+                                isSystem
+                                  ? 'text-amber-400/80 italic'
+                                  : 'text-amber-100/80'
+                              } break-words`}
+                            >
+                              {msg.message}
+                            </p>
+                            {msg.type === 'team' && (
+                              <span className="text-xs text-amber-400/50">(팀 채팅)</span>
+                            )}
+                            {msg.type === 'diplomacy' && msg.target && (
+                              <span className="text-xs text-amber-400/50">
+                                (→ {NATIONS[msg.target].name})
+                              </span>
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })
+                  )
                 )}
               </div>
             </Card>

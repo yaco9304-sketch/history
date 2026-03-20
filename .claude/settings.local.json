@@ -17,7 +17,13 @@
       "Bash(open http://localhost:5175)",
       "Bash(git init:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\n채팅 기능 수정 완료\n\n- ChatPanel z-index 증가 및 AnimatePresence 추가\n- 서버에서 메시지 발신자에게도 chatMessage 전송\n- 팀/외교/공개 채팅 모두 정상 작동\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\n채팅 기능 수정 완료\n\n- ChatPanel z-index 증가 및 AnimatePresence 추가\n- 서버에서 메시지 발신자에게도 chatMessage 전송\n- 팀/외교/공개 채팅 모두 정상 작동\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(open http://localhost:5174)",
+      "Bash(wc:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(npx vite build:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

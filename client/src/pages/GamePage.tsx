@@ -10,6 +10,10 @@ import {
   BookOpen,
   Building2,
   ChevronRight,
+  Trophy,
+  Crown,
+  FlaskConical,
+  Landmark,
 } from 'lucide-react';
 import { Button, Card, Countdown } from '../components/common';
 import { GameMap } from '../components/game/GameMap';
@@ -18,16 +22,41 @@ import { EventModal } from '../components/game/EventModal';
 import { DiplomacyPanel } from '../components/game/DiplomacyPanel';
 import { ChatPanel } from '../components/game/ChatPanel';
 import { BattleModal } from '../components/game/BattleModal';
+import { VictoryPanel } from '../components/game/VictoryPanel';
+import { HeroPanel } from '../components/game/HeroPanel';
+import { TechTreePanel } from '../components/game/TechTreePanel';
+import { HeritagePanel } from '../components/game/HeritagePanel';
 import { NATIONS } from '../data/nations';
+import { getHeroById } from '../data/heroes';
+import { getTechById } from '../data/techTree';
+import { getHeritageById } from '../data/culturalHeritage';
 import { Nation, NationStats, Player } from '../types';
 import { useGameStore, initializeSocketListeners, getMyTeamPlayers } from '../stores/gameStore';
 import * as socket from '../socket';
+import { isSinglePlayerAIMode } from '../utils/gameMode';
 
 export const GamePage = () => {
   const { roomCode } = useParams();
   const navigate = useNavigate();
   const [showChat, setShowChat] = useState(false);
+
+  // 디버깅: 게임 모드 확인
+  const isSinglePlayerMode = isSinglePlayerAIMode();
+  console.log('[GamePage] Game mode check:', {
+    isSinglePlayerMode,
+    singlePlayerRoomCode: localStorage.getItem('singlePlayerRoomCode'),
+    currentRoomCode: roomCode
+  });
   const [showDiplomacy, setShowDiplomacy] = useState(false);
+  const [showVictoryPanel, setShowVictoryPanel] = useState(false);
+  const [showHeroPanel, setShowHeroPanel] = useState(false);
+  const [showTechTree, setShowTechTree] = useState(false);
+  const [activeHero, setActiveHero] = useState<{ heroId: string; turnsRemaining: number } | undefined>();
+  const [completedTechs, _setCompletedTechs] = useState<string[]>([]);
+  const [researchingTech, setResearchingTech] = useState<{ techId: string; turnsRemaining: number } | undefined>();
+  const [showHeritage, setShowHeritage] = useState(false);
+  const [builtHeritages, _setBuiltHeritages] = useState<string[]>([]);
+  const [buildingHeritage, setBuildingHeritage] = useState<{ heritageId: string; turnsRemaining: number } | undefined>();
   const [pendingBattle, setPendingBattle] = useState<{
     attackerNation: Nation;
     defenderNation: Nation;
@@ -152,9 +181,9 @@ export const GamePage = () => {
   const stats: Record<Nation, NationStats> = useMemo(() => {
     if (!room) {
       return {
-        goguryeo: { military: 0, economy: 0, diplomacy: 0, culture: 0, gold: 0, population: 0, morale: 0 },
-        baekje: { military: 0, economy: 0, diplomacy: 0, culture: 0, gold: 0, population: 0, morale: 0 },
-        silla: { military: 0, economy: 0, diplomacy: 0, culture: 0, gold: 0, population: 0, morale: 0 },
+        goguryeo: { military: 0, economy: 0, diplomacy: 0, culture: 0, gold: 0, population: 0, morale: 0, culturePoints: 0, techProgress: 0, peaceTurns: 0 },
+        baekje: { military: 0, economy: 0, diplomacy: 0, culture: 0, gold: 0, population: 0, morale: 0, culturePoints: 0, techProgress: 0, peaceTurns: 0 },
+        silla: { military: 0, economy: 0, diplomacy: 0, culture: 0, gold: 0, population: 0, morale: 0, culturePoints: 0, techProgress: 0, peaceTurns: 0 },
       };
     }
     return {
@@ -336,9 +365,52 @@ export const GamePage = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={() => setShowChat(!showChat)}>
-              <MessageCircle className="w-5 h-5" />
+            {/* 문화유산 버튼 */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowHeritage(!showHeritage)}
+              className={showHeritage ? 'bg-amber-500/20' : ''}
+              title="문화유산"
+            >
+              <Landmark className="w-5 h-5 text-purple-400" />
             </Button>
+            {/* 테크 트리 버튼 */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowTechTree(!showTechTree)}
+              className={showTechTree ? 'bg-amber-500/20' : ''}
+              title="기술 연구"
+            >
+              <FlaskConical className="w-5 h-5 text-green-400" />
+            </Button>
+            {/* 위인 버튼 */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowHeroPanel(!showHeroPanel)}
+              className={showHeroPanel ? 'bg-amber-500/20' : ''}
+              title="위인"
+            >
+              <Crown className="w-5 h-5 text-amber-300" />
+            </Button>
+            {/* 승리 조건 버튼 */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowVictoryPanel(!showVictoryPanel)}
+              className={showVictoryPanel ? 'bg-amber-500/20' : ''}
+              title="승리 조건"
+            >
+              <Trophy className="w-5 h-5 text-amber-400" />
+            </Button>
+            {/* 멀티플레이 모드에서만 채팅 버튼 표시 */}
+            {!isSinglePlayerMode && (
+              <Button variant="ghost" size="sm" onClick={() => setShowChat(!showChat)}>
+                <MessageCircle className="w-5 h-5" />
+              </Button>
+            )}
             <Button variant="ghost" size="sm">
               <Settings className="w-5 h-5" />
             </Button>
@@ -448,15 +520,109 @@ export const GamePage = () => {
         </div>
       </main>
 
-      {/* Chat Panel */}
+      {/* Chat Panel - 멀티플레이 모드에서만 표시 */}
       <AnimatePresence>
-        {showChat && room && (
+        {!isSinglePlayerMode && showChat && room && (
           <ChatPanel
             messages={messages}
             myNation={myNation}
             roomPlayers={room.players}
             onSendMessage={handleSendMessage}
             onClose={() => setShowChat(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Victory Panel */}
+      <AnimatePresence>
+        {showVictoryPanel && room && myNation && (
+          <motion.div
+            initial={{ opacity: 0, x: 300 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 300 }}
+            className="fixed top-20 right-4 z-50 w-80"
+          >
+            <VictoryPanel
+              victoryProgress={room.teams[myNation]?.victoryProgress}
+              currentTurn={currentTurn}
+              maxTurns={room.settings.maxTurns}
+              allianceCount={room.teams[myNation]?.allies?.length || 0}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Hero Panel */}
+      <AnimatePresence>
+        {showHeroPanel && myNation && (
+          <HeroPanel
+            nation={myNation}
+            currentTurn={currentTurn}
+            nationStats={stats[myNation]}
+            activeHero={activeHero}
+            onActivateHero={(heroId) => {
+              // 위인 능력 발동
+              const hero = getHeroById(heroId);
+              if (hero) {
+                setActiveHero({
+                  heroId,
+                  turnsRemaining: hero.specialAbility.duration,
+                });
+                console.log(`[Hero] Activated: ${hero.name}`);
+              }
+              setShowHeroPanel(false);
+            }}
+            onClose={() => setShowHeroPanel(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Tech Tree Panel */}
+      <AnimatePresence>
+        {showTechTree && myNation && (
+          <TechTreePanel
+            nation={myNation}
+            currentGold={stats[myNation]?.gold || 0}
+            completedTechs={completedTechs}
+            researchingTech={researchingTech}
+            onResearchTech={(techId) => {
+              const tech = getTechById(techId);
+              if (tech) {
+                setResearchingTech({
+                  techId,
+                  turnsRemaining: tech.cost.turns,
+                });
+                console.log(`[Tech] Started researching: ${tech.name}`);
+              }
+              setShowTechTree(false);
+            }}
+            onClose={() => setShowTechTree(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Heritage Panel */}
+      <AnimatePresence>
+        {showHeritage && myNation && (
+          <HeritagePanel
+            nation={myNation}
+            currentGold={stats[myNation]?.gold || 0}
+            currentCulturePoints={stats[myNation]?.culturePoints || 0}
+            completedTechs={completedTechs}
+            builtHeritages={builtHeritages}
+            buildingHeritage={buildingHeritage}
+            onBuildHeritage={(heritageId) => {
+              const heritage = getHeritageById(heritageId);
+              if (heritage) {
+                setBuildingHeritage({
+                  heritageId,
+                  turnsRemaining: heritage.constructionCost.turns,
+                });
+                console.log(`[Heritage] Started building: ${heritage.name}`);
+              }
+              setShowHeritage(false);
+            }}
+            onClose={() => setShowHeritage(false)}
           />
         )}
       </AnimatePresence>
@@ -475,8 +641,9 @@ export const GamePage = () => {
           nation={myNation || undefined}
           stats={myNation ? stats[myNation] : undefined}
           roomStatus={room?.status}
-          messages={messages.filter(msg => msg.type === 'team')}
-          onSendMessage={(message) => handleSendMessage(message, 'team')}
+          messages={!isSinglePlayerMode ? messages.filter(msg => msg.type === 'team') : undefined}
+          onSendMessage={!isSinglePlayerMode ? (message) => handleSendMessage(message, 'team') : undefined}
+          isSinglePlayerMode={isSinglePlayerMode}
         />
       )}
 

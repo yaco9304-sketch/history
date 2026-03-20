@@ -93,7 +93,7 @@ export async function getAIAdvice(
   event: HistoricalEvent,
   nation: Nation,
   currentStats: NationStats
-): Promise<string | null> {
+): Promise<{ advice: string; isQuotaError?: boolean } | null> {
   const ai = getGenAI();
   if (!ai) {
     return null;
@@ -119,14 +119,23 @@ export async function getAIAdvice(
     const text = response.text();
 
     console.log('[AI Advisor] AI 조언 생성 성공');
-    return text;
+    return { advice: text };
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('[AI Advisor] Error details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: errorMessage,
       name: error instanceof Error ? error.name : undefined,
-      stack: error instanceof Error ? error.stack : undefined,
       fullError: error
     });
+
+    // Gemini API 할당량 초과 에러 (429 Too Many Requests)
+    if (errorMessage.includes('429') || errorMessage.toLowerCase().includes('quota')) {
+      return {
+        advice: '현재 AI 조언자 사용량이 많아 잠시 후 다시 시도해주세요. 🥲\n(API 할당량 초과)',
+        isQuotaError: true,
+      };
+    }
+
     return null;
   }
 }
@@ -150,6 +159,14 @@ export function getFallbackAdvice(
 
   return advice;
 }
+
+
+
+
+
+
+
+
 
 
 

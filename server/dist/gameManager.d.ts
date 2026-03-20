@@ -1,4 +1,4 @@
-import { GameRoom, GameSettings, Player, Nation, NationStats, HistoricalEvent, ChatMessage } from './types.js';
+import { GameRoom, GameSettings, Player, Nation, NationStats, HistoricalEvent, ChatMessage, VictoryType, VictoryProgress } from './types.js';
 export declare class GameManager {
     private rooms;
     private codeToRoomId;
@@ -61,6 +61,17 @@ export declare class GameManager {
         attackerLosses: Partial<NationStats>;
         defenderLosses: Partial<NationStats>;
     }): boolean;
+    updateVictoryProgress(roomId: string, nation: Nation): VictoryProgress | null;
+    calculateTotalScore(stats: NationStats): number;
+    checkVictoryConditions(roomId: string): {
+        winner: Nation;
+        victoryType: VictoryType;
+        victoryName: string;
+    } | null;
+    eliminateNation(roomId: string, nation: Nation, conqueror: Nation): boolean;
+    updatePeaceTurns(roomId: string): void;
+    addCulturePoints(roomId: string, nation: Nation, points: number): void;
+    handleVictory(roomId: string, winner: Nation, victoryType: VictoryType): void;
     getAllRooms(): GameRoom[];
 }
 export declare const gameManager: GameManager;

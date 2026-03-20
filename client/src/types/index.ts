@@ -5,6 +5,72 @@
 // 국가 타입
 export type Nation = 'goguryeo' | 'baekje' | 'silla';
 
+// ========================================
+// 승리 조건 시스템
+// ========================================
+export type VictoryType = 'military' | 'cultural' | 'diplomatic' | 'technological' | 'score';
+
+export interface VictoryCondition {
+  type: VictoryType;
+  name: string;
+  description: string;
+  icon: string;
+  requirement: {
+    military?: { conqueredNations: number };
+    cultural?: { culturePoints: number };
+    diplomatic?: { alliances: number; peaceTurns: number };
+    technological?: { completedTechs: number };
+    score?: { minTurns: number };
+  };
+}
+
+export interface VictoryProgress {
+  military: { conqueredNations: string[]; progress: number };
+  cultural: { culturePoints: number; progress: number };
+  diplomatic: { alliances: number; peaceTurns: number; progress: number };
+  technological: { completedTechs: string[]; progress: number };
+  score: { totalScore: number; progress: number };
+}
+
+// 승리 조건 상수
+export const VICTORY_CONDITIONS: VictoryCondition[] = [
+  {
+    type: 'military',
+    name: '삼국통일',
+    description: '다른 두 국가를 모두 정복하여 삼국을 통일합니다.',
+    icon: '🏆',
+    requirement: { military: { conqueredNations: 2 } },
+  },
+  {
+    type: 'cultural',
+    name: '문화대국',
+    description: '문화 점수 500점을 달성하여 문화적 우위를 점합니다.',
+    icon: '🏛️',
+    requirement: { cultural: { culturePoints: 500 } },
+  },
+  {
+    type: 'diplomatic',
+    name: '평화의 시대',
+    description: '두 국가와 동맹을 맺고 10턴간 평화를 유지합니다.',
+    icon: '📜',
+    requirement: { diplomatic: { alliances: 2, peaceTurns: 10 } },
+  },
+  {
+    type: 'technological',
+    name: '기술 선진국',
+    description: '모든 기술을 연구하여 기술적 우위를 달성합니다.',
+    icon: '🔬',
+    requirement: { technological: { completedTechs: 8 } },
+  },
+  {
+    type: 'score',
+    name: '최강국',
+    description: '30턴이 지났을 때 가장 높은 총점을 획득합니다.',
+    icon: '⏰',
+    requirement: { score: { minTurns: 30 } },
+  },
+];
+
 // 국가 정보
 export interface NationInfo {
   id: Nation;
@@ -25,6 +91,10 @@ export interface NationStats {
   gold: number;        // 재화
   population: number;  // 인구
   morale: number;      // 민심 (0-100)
+  // 승리 조건용 스탯
+  culturePoints: number;  // 문화 점수 (문화 승리용)
+  techProgress: number;   // 기술 진행도
+  peaceTurns: number;     // 평화 유지 턴 수
   [key: string]: number; // index signature 추가
 }
 
@@ -47,6 +117,9 @@ export interface Team {
   stats: NationStats;
   allies: Nation[];
   enemies: Nation[];
+  isEliminated?: boolean;
+  conqueredBy?: Nation;
+  victoryProgress?: VictoryProgress;
 }
 
 // 선택지

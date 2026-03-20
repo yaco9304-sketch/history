@@ -30,6 +30,15 @@ export interface GameRoom {
     stats: NationStats;
     allies: Nation[];
     enemies: Nation[];
+    isEliminated?: boolean;
+    conqueredBy?: Nation;
+    victoryProgress?: {
+      military: { conqueredNations: string[]; progress: number };
+      cultural: { culturePoints: number; progress: number };
+      diplomatic: { alliances: number; peaceTurns: number; progress: number };
+      technological: { completedTechs: string[]; progress: number };
+      score: { totalScore: number; progress: number };
+    };
   }>;
   players: Record<string, Player & { socketId: string; joinedAt: number }>;
   settings: {

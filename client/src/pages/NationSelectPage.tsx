@@ -7,6 +7,7 @@ import { NATIONS } from '../data/nations';
 import { Nation } from '../types';
 import { useGameStore, initializeSocketListeners, getTeamPlayers } from '../stores/gameStore';
 import * as socket from '../socket';
+import { getSinglePlayerRoomCode } from '../utils/gameMode';
 
 interface TeamStatus {
   current: number;
@@ -20,7 +21,15 @@ const nationImages: Record<Nation, string> = {
   silla: '/images/silla.svg',
 };
 
-export const NationSelectPage = () => {
+interface NationSelectPageProps {
+  mode?: 'multiplayer' | 'singleplayer';
+  backPath?: string;
+}
+
+export const NationSelectPage = ({
+  mode = 'multiplayer',
+  backPath = '/'
+}: NationSelectPageProps) => {
   const navigate = useNavigate();
   const [selectedNation, setSelectedNation] = useState<Nation | null>(null);
   const [playerName, setPlayerName] = useState('');
@@ -72,12 +81,12 @@ export const NationSelectPage = () => {
         // 소켓 연결 확인 및 대기
         const sock = socket.connectSocket();
         if (!sock.connected) {
-          console.log('[NationSelect] Waiting for socket connection...');
+          console.log(`[NationSelect:${mode}] Waiting for socket connection...`);
           await new Promise<void>((resolve, reject) => {
             const timeout = setTimeout(() => {
               reject(new Error('소켓 연결 시간 초과'));
             }, 5000);
-            
+
             if (sock.connected) {
               clearTimeout(timeout);
               resolve();
@@ -89,22 +98,27 @@ export const NationSelectPage = () => {
             }
           });
         }
-        
-        console.log('[NationSelect] Socket connected, joining room...');
 
-        // 멀티플레이 모드: 항상 'MAIN' 방 코드 사용 (방 코드 없음)
-        const roomCode = 'MAIN';
+        console.log(`[NationSelect:${mode}] Socket connected, joining room...`);
 
-        console.log('[NationSelect] Joining room:', {
-          roomCode,
-          playerName: playerName.trim()
-        });
-        
+        // 모드에 따라 방 코드 결정
+        const roomCode = mode === 'singleplayer' ? getSinglePlayerRoomCode() : 'MAIN';
+
         if (!roomCode) {
-          setError('방 코드가 없습니다. 다시 시도해주세요.');
+          setError(mode === 'singleplayer'
+            ? '방 코드가 없습니다. AI 대전 설정으로 돌아갑니다.'
+            : '방 코드가 없습니다. 다시 시도해주세요.');
+          if (mode === 'singleplayer') {
+            setTimeout(() => navigate('/single/ai/setup'), 2000);
+          }
           setIsJoining(false);
           return;
         }
+
+        console.log(`[NationSelect:${mode}] Joining room:`, {
+          roomCode,
+          playerName: playerName.trim()
+        });
         
         // 방에 먼저 입장
         joinRoom(roomCode, playerName.trim());
@@ -129,23 +143,23 @@ export const NationSelectPage = () => {
     
     const pendingNation = localStorage.getItem('pendingNation') as Nation | null;
     const savedRoomCode = localStorage.getItem('pendingRoomCode') || room.code;
-    
+
     if (!pendingNation) {
-      console.log('[NationSelect] No pending nation, stopping join process');
+      console.log(`[NationSelect:${mode}] No pending nation, stopping join process`);
       setIsJoining(false);
       return;
     }
 
-    console.log('[NationSelect] Room joined, processing team selection...', { 
-      roomCode: room.code, 
-      pendingNation, 
+    console.log(`[NationSelect:${mode}] Room joined, processing team selection...`, {
+      roomCode: room.code,
+      pendingNation,
       myNation,
       playerId: room.players ? Object.keys(room.players)[0] : null
     });
 
     // 이미 팀이 선택되었는지 확인
     if (myNation === pendingNation) {
-      console.log('[NationSelect] Team already selected, navigating to lobby');
+      console.log(`[NationSelect:${mode}] Team already selected, navigating to lobby`);
       setIsJoining(false);
       localStorage.removeItem('pendingPlayerName');
       localStorage.removeItem('pendingNation');
@@ -155,19 +169,18 @@ export const NationSelectPage = () => {
     }
 
     // 팀 선택 시도
-    console.log('[NationSelect] Selecting team:', pendingNation);
+    console.log(`[NationSelect:${mode}] Selecting team:`, pendingNation);
     selectTeam(pendingNation);
-    
+
     // 팀 선택 완료 대기 (최대 3초)
     const checkInterval = setInterval(() => {
       const currentRoom = useGameStore.getState().room;
       const currentMyNation = useGameStore.getState().myNation;
-      
+
       if (currentMyNation === pendingNation && currentRoom) {
-        console.log('[NationSelect] Team selection complete! Navigating to lobby...');
+        console.log(`[NationSelect:${mode}] Team selection complete! Navigating to lobby...`);
         clearInterval(checkInterval);
 
-        // 멀티플레이 모드: 바로 로비로 이동
         setIsJoining(false);
         localStorage.removeItem('pendingPlayerName');
         localStorage.removeItem('pendingNation');
@@ -175,12 +188,12 @@ export const NationSelectPage = () => {
         navigate(`/lobby/${savedRoomCode}`, { replace: true });
       }
     }, 200);
-    
+
     // 타임아웃 설정
     const timeout = setTimeout(() => {
       clearInterval(checkInterval);
       if (isJoining) {
-        console.warn('[NationSelect] Team selection timeout, navigating anyway...');
+        console.warn(`[NationSelect:${mode}] Team selection timeout, navigating anyway...`);
         setIsJoining(false);
         localStorage.removeItem('pendingPlayerName');
         localStorage.removeItem('pendingNation');
@@ -198,10 +211,10 @@ export const NationSelectPage = () => {
   // 에러 발생 시 처리
   useEffect(() => {
     if (error && isJoining) {
-      console.error('[NationSelect] Error occurred:', error);
+      console.error(`[NationSelect:${mode}] Error occurred:`, error);
       setIsJoining(false);
     }
-  }, [error, isJoining]);
+  }, [error, isJoining, mode]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -230,7 +243,7 @@ export const NationSelectPage = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/')}
+            onClick={() => navigate(backPath)}
             leftIcon={<ArrowLeft className="w-4 h-4" />}
           >
             돌아가기
@@ -402,7 +415,7 @@ export const NationSelectPage = () => {
               type="text"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
-              onKeyPress={(e) => {
+              onKeyDown={(e) => {
                 if (e.key === 'Enter' && playerName.trim() && !isJoining) {
                   handleJoinTeam();
                 }

@@ -1,4 +1,53 @@
 export type Nation = 'goguryeo' | 'baekje' | 'silla';
+export type VictoryType = 'military' | 'cultural' | 'diplomatic' | 'technological' | 'score';
+export interface VictoryCondition {
+    type: VictoryType;
+    name: string;
+    description: string;
+    icon: string;
+    requirement: {
+        military?: {
+            conqueredNations: number;
+        };
+        cultural?: {
+            culturePoints: number;
+        };
+        diplomatic?: {
+            alliances: number;
+            peaceTurns: number;
+        };
+        technological?: {
+            completedTechs: number;
+        };
+        score?: {
+            minTurns: number;
+        };
+    };
+}
+export interface VictoryProgress {
+    military: {
+        conqueredNations: string[];
+        progress: number;
+    };
+    cultural: {
+        culturePoints: number;
+        progress: number;
+    };
+    diplomatic: {
+        alliances: number;
+        peaceTurns: number;
+        progress: number;
+    };
+    technological: {
+        completedTechs: string[];
+        progress: number;
+    };
+    score: {
+        totalScore: number;
+        progress: number;
+    };
+}
+export declare const VICTORY_CONDITIONS: VictoryCondition[];
 export interface NationStats {
     military: number;
     economy: number;
@@ -7,6 +56,9 @@ export interface NationStats {
     gold: number;
     population: number;
     morale: number;
+    culturePoints: number;
+    techProgress: number;
+    peaceTurns: number;
     [key: string]: number;
 }
 export interface Player {
@@ -38,6 +90,9 @@ export interface Team {
     allies: Nation[];
     enemies: Nation[];
     eventHistory: EventHistory[];
+    conqueredBy?: Nation;
+    isEliminated: boolean;
+    victoryProgress: VictoryProgress;
 }
 export interface Choice {
     id: string;
@@ -91,6 +146,13 @@ export interface GameRoom {
     createdAt: number;
     startedAt?: number;
     chatMessages: ChatMessage[];
+    isSinglePlayerAI?: boolean;
+    victoryConditions: VictoryCondition[];
+    winner?: {
+        nation: Nation;
+        victoryType: VictoryType;
+        turn: number;
+    };
 }
 export interface ChatMessage {
     id: string;
@@ -118,6 +180,9 @@ export interface ServerToClientEvents {
     voteResult: (nation: Nation, choiceId: string, effects: Partial<NationStats>) => void;
     turnEnded: (room: GameRoom) => void;
     gameEnded: (room: GameRoom, winner: Nation | null, reason: string) => void;
+    victoryProgress: (nation: Nation, progress: VictoryProgress) => void;
+    victoryAchieved: (nation: Nation, victoryType: VictoryType, victoryName: string) => void;
+    nationEliminated: (nation: Nation, conqueror: Nation) => void;
     chatMessage: (message: ChatMessage) => void;
     allianceProposed: (fromNation: Nation, toNation: Nation) => void;
     allianceAccepted: (nation1: Nation, nation2: Nation) => void;

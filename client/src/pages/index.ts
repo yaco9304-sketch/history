@@ -7,7 +7,6 @@ export { ResultPage } from './ResultPage';
 export { SinglePlayerPage } from './SinglePlayerPage';
 export { SinglePlayerModeSelectPage } from './SinglePlayerModeSelectPage';
 export { SinglePlayerAISetupPage } from './SinglePlayerAISetupPage';
-export { SinglePlayerAINationSelectPage } from './SinglePlayerAINationSelectPage';
 export { TutorialPage } from './TutorialPage';
 export { TeacherDashboardPage } from './TeacherDashboardPage';
 export { MultiplayerCreatePage } from './MultiplayerCreatePage';

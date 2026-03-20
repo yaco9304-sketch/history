@@ -183,14 +183,32 @@ const checkVoteCompletionAndAdvance = (roomId, nation) => {
         return;
     }
     const vote = room.currentVotes[nation];
-    // 팀의 모든 플레이어 (인간 + AI) - test-host 제외
-    // AI 플레이어는 자동 투표하므로 포함해야 함
-    const teamPlayers = room.teams[nation]?.players.filter(pid => {
-        const player = room.players[pid];
-        // AI 플레이어는 항상 포함, 인간 플레이어는 온라인일 때만 포함
-        return player && !pid.startsWith('test-host-') && (player.isAI || player.isOnline);
-    }) || [];
-    const allVoted = teamPlayers.length > 0 && teamPlayers.every(pid => vote.votes[pid]);
+    // 싱글플레이 AI 대전: 플레이어만 투표하면 즉시 진행
+    let allVoted = false;
+    let teamPlayers = [];
+    if (room.isSinglePlayerAI) {
+        // 인간 플레이어만 확인
+        const humanPlayers = room.teams[nation]?.players.filter(pid => {
+            const player = room.players[pid];
+            return player && !player.isAI && !pid.startsWith('test-host-');
+        }) || [];
+        teamPlayers = humanPlayers;
+        allVoted = humanPlayers.length > 0 && humanPlayers.every(pid => vote.votes[pid]);
+        console.log(`[VoteCheck] SinglePlayer AI mode - Human players only:`, {
+            humanPlayers: humanPlayers.map(pid => room.players[pid]?.name),
+            allVoted
+        });
+    }
+    else {
+        // 멀티플레이: 팀의 모든 플레이어 (인간 + AI) - test-host 제외
+        // AI 플레이어는 자동 투표하므로 포함해야 함
+        teamPlayers = room.teams[nation]?.players.filter(pid => {
+            const player = room.players[pid];
+            // AI 플레이어는 항상 포함, 인간 플레이어는 온라인일 때만 포함
+            return player && !pid.startsWith('test-host-') && (player.isAI || player.isOnline);
+        }) || [];
+        allVoted = teamPlayers.length > 0 && teamPlayers.every(pid => vote.votes[pid]);
+    }
     console.log(`[VoteCheck] ${nation} team vote status:`, {
         teamPlayers: teamPlayers.map(pid => {
             const p = room.players[pid];
@@ -229,13 +247,23 @@ const checkVoteCompletionAndAdvance = (roomId, nation) => {
                         console.log(`[VoteCheck] ${nation}: No vote data`);
                         return false;
                     }
-                    // 팀의 모든 플레이어 (인간 + AI) - test-host 제외
-                    // AI 플레이어는 자동 투표하므로 포함해야 함
-                    const teamPlayers = updatedRoom.teams[nation].players.filter(pid => {
-                        const player = updatedRoom.players[pid];
-                        // AI 플레이어는 항상 포함, 인간 플레이어는 온라인일 때만 포함
-                        return player && !pid.startsWith('test-host-') && (player.isAI || player.isOnline);
-                    });
+                    // 싱글플레이 AI 대전: 인간 플레이어만 확인
+                    let teamPlayers;
+                    if (updatedRoom.isSinglePlayerAI) {
+                        teamPlayers = updatedRoom.teams[nation].players.filter(pid => {
+                            const player = updatedRoom.players[pid];
+                            return player && !player.isAI && !pid.startsWith('test-host-');
+                        });
+                    }
+                    else {
+                        // 멀티플레이: 팀의 모든 플레이어 (인간 + AI) - test-host 제외
+                        // AI 플레이어는 자동 투표하므로 포함해야 함
+                        teamPlayers = updatedRoom.teams[nation].players.filter(pid => {
+                            const player = updatedRoom.players[pid];
+                            // AI 플레이어는 항상 포함, 인간 플레이어는 온라인일 때만 포함
+                            return player && !pid.startsWith('test-host-') && (player.isAI || player.isOnline);
+                        });
+                    }
                     const hasVoted = teamPlayers.length > 0 && teamPlayers.every(pid => vote.votes[pid]);
                     console.log(`[VoteCheck] ${nation}: ${teamPlayers.length} players (${teamPlayers.map(pid => {
                         const p = updatedRoom.players[pid];
@@ -426,12 +454,18 @@ app.post('/api/ai/advice', async (req, res) => {
             return res.status(400).json({ error: '필수 파라미터가 누락되었습니다.' });
         }
         // AI 조언 요청
-        const advice = await getAIAdvice(event, nation, stats);
-        if (advice) {
-            res.json({ advice });
+        const adviceResult = await getAIAdvice(event, nation, stats);
+        if (adviceResult) {
+            // isQuotaError가 true이면, 해당 메시지를 그대로 반환 (isFallback으로 처리)
+            if (adviceResult.isQuotaError) {
+                res.json({ advice: adviceResult.advice, isFallback: true });
+            }
+            else {
+                res.json({ advice: adviceResult.advice });
+            }
         }
         else {
-            // 폴백 조언
+            // 폴백 조언 (네트워크 오류 등)
             const fallbackAdvice = getFallbackAdvice(event, nation, stats);
             res.json({ advice: fallbackAdvice, isFallback: true });
         }
@@ -632,6 +666,53 @@ app.post('/api/ai/remove', express.json(), (req, res) => {
     catch (error) {
         console.error('[API] Remove AI player error:', error);
         res.status(500).json({ error: 'AI 플레이어 제거 중 오류가 발생했습니다.' });
+    }
+});
+// 방 리셋 API (테스트용)
+app.post('/api/rooms/:roomCode/reset', express.json(), (req, res) => {
+    try {
+        const { roomCode } = req.params;
+        if (!roomCode) {
+            return res.status(400).json({ error: '방 코드를 입력해주세요.' });
+        }
+        const room = gameManager.getRoomByCode(roomCode.toUpperCase());
+        if (!room) {
+            return res.status(404).json({ error: '방을 찾을 수 없습니다.' });
+        }
+        // 모든 플레이어 제거
+        const playerIds = Object.keys(room.players);
+        for (const playerId of playerIds) {
+            gameManager.leaveRoom(playerId);
+        }
+        // 방 상태 초기화
+        room.status = 'waiting';
+        room.currentTurn = 0;
+        room.currentYear = 300;
+        room.currentEvent = undefined;
+        room.currentVotes = {
+            goguryeo: { eventId: '', votes: {}, deadline: 0 },
+            baekje: { eventId: '', votes: {}, deadline: 0 },
+            silla: { eventId: '', votes: {}, deadline: 0 },
+        };
+        room.turnDeadline = undefined;
+        // 팀 초기화는 gameManager에서 처리
+        room.chatMessages = [];
+        // Socket.io 방의 모든 클라이언트 연결 해제
+        io.in(room.id).disconnectSockets();
+        console.log(`[API] Room reset: ${roomCode}`);
+        res.json({
+            success: true,
+            message: `방 ${roomCode}이(가) 초기화되었습니다.`,
+            room: {
+                code: room.code,
+                status: room.status,
+                playerCount: Object.keys(room.players).length
+            }
+        });
+    }
+    catch (error) {
+        console.error('[API] Reset room error:', error);
+        res.status(500).json({ error: '방 리셋 중 오류가 발생했습니다.' });
     }
 });
 // 전투 제안 저장 (battleId -> { attackerNation, defenderNation, roomId })
@@ -885,28 +966,38 @@ io.on('connection', (socket) => {
                     // 방 상태 업데이트 후 다시 가져오기
                     const roomAfterTrigger = gameManager.getRoom(roomId);
                     if (roomAfterTrigger) {
-                        // 1단계: 토론 시작 (discussionDuration)
-                        roomAfterTrigger.status = 'discussion';
-                        const discussionDeadline = Date.now() + roomAfterTrigger.settings.discussionDuration * 1000;
-                        io.to(roomId).emit('discussionStarted', event, discussionDeadline);
-                        debouncedRoomUpdate(roomId, roomAfterTrigger);
-                        console.log(`[Server] Discussion started for room ${roomId}, duration: ${roomAfterTrigger.settings.discussionDuration}s`);
-                        // 토론 종료 후 투표 시작
-                        setTimeout(() => {
-                            const roomForVoting = gameManager.getRoom(roomId);
-                            if (!roomForVoting)
-                                return;
-                            // 2단계: 투표 시작 (voteDuration)
-                            roomForVoting.status = 'voting';
-                            const voteDeadline = Date.now() + roomForVoting.settings.voteDuration * 1000;
+                        // 싱글플레이 AI 대전: 토론 단계 건너뛰고 바로 투표
+                        if (roomAfterTrigger.isSinglePlayerAI) {
+                            console.log('[Server] SinglePlayer AI mode: Skipping discussion, going straight to voting');
+                            roomAfterTrigger.status = 'voting';
+                            const voteDeadline = Date.now() + 999999000; // 긴 시간 (실제로는 즉시 처리됨)
                             io.to(roomId).emit('votingStarted', event, voteDeadline);
-                            debouncedRoomUpdate(roomId, roomForVoting);
-                            console.log(`[Server] Voting started for room ${roomId}, duration: ${roomForVoting.settings.voteDuration}s`);
-                            // AI 플레이어 자동 투표 (AI 대전 모드가 아닌 경우에만)
-                            if (!isAIBattle) {
+                            debouncedRoomUpdate(roomId, roomAfterTrigger);
+                            // 싱글플레이 AI 대전에서도 AI 플레이어 자동 투표
+                            autoAIVote(roomId, event, 2000);
+                        }
+                        else {
+                            // 멀티플레이: 1단계 토론 시작 (discussionDuration)
+                            roomAfterTrigger.status = 'discussion';
+                            const discussionDeadline = Date.now() + roomAfterTrigger.settings.discussionDuration * 1000;
+                            io.to(roomId).emit('discussionStarted', event, discussionDeadline);
+                            debouncedRoomUpdate(roomId, roomAfterTrigger);
+                            console.log(`[Server] Discussion started for room ${roomId}, duration: ${roomAfterTrigger.settings.discussionDuration}s`);
+                            // 토론 종료 후 투표 시작
+                            setTimeout(() => {
+                                const roomForVoting = gameManager.getRoom(roomId);
+                                if (!roomForVoting)
+                                    return;
+                                // 2단계: 투표 시작 (voteDuration)
+                                roomForVoting.status = 'voting';
+                                const voteDeadline = Date.now() + roomForVoting.settings.voteDuration * 1000;
+                                io.to(roomId).emit('votingStarted', event, voteDeadline);
+                                debouncedRoomUpdate(roomId, roomForVoting);
+                                console.log(`[Server] Voting started for room ${roomId}, duration: ${roomForVoting.settings.voteDuration}s`);
+                                // AI 플레이어 자동 투표 (멀티플레이에서도 AI가 있을 수 있음)
                                 autoAIVote(roomId, event, 2000);
-                            }
-                        }, roomAfterTrigger.settings.discussionDuration * 1000);
+                            }, roomAfterTrigger.settings.discussionDuration * 1000);
+                        }
                     }
                 }, 3000);
             }
@@ -933,8 +1024,17 @@ io.on('connection', (socket) => {
             const playerName = result.room?.players[playerId]?.name || 'Unknown';
             console.log(`[Vote] ${playerName} voted for choice ${choiceId} in ${result.nation} team`);
             io.to(roomId).emit('voteReceived', result.nation, playerId, choiceId);
-            // 투표 완료 확인 및 턴 진행
-            checkVoteCompletionAndAdvance(roomId, result.nation);
+            // 싱글플레이 AI 대전: 즉시 다음 이벤트로 진행
+            if (result.room.isSinglePlayerAI) {
+                console.log('[Vote] SinglePlayer AI mode: Processing vote immediately');
+                setTimeout(() => {
+                    checkVoteCompletionAndAdvance(roomId, result.nation);
+                }, 1000); // 1초 후 처리 (사용자가 선택을 확인할 시간)
+            }
+            else {
+                // 멀티플레이: 투표 완료 확인 및 턴 진행
+                checkVoteCompletionAndAdvance(roomId, result.nation);
+            }
         }
         catch (error) {
             console.error('[Socket] submitVote error:', error);
@@ -974,7 +1074,7 @@ io.on('connection', (socket) => {
         });
         if (chatMessage) {
             if (type === 'team') {
-                // 팀 채팅: 같은 팀에게만
+                // 팀 채팅: 같은 팀에게만 (메시지 보낸 사람 포함)
                 const room = gameManager.getRoom(roomId);
                 console.log('[Socket] Team chat - room:', room ? 'found' : 'not found', 'team:', chatMessage.team);
                 if (room) {
@@ -983,7 +1083,14 @@ io.on('connection', (socket) => {
                         const p = room.players[pid];
                         return `${p?.name} (${pid}, online: ${p?.isOnline}, socketId: ${p?.socketId})`;
                     }));
+                    // 메시지를 보낸 플레이어에게도 전송 (자기 자신)
+                    socket.emit('chatMessage', chatMessage);
+                    console.log(`[Socket] Sent team chat to sender: ${socket.data.playerId}`);
+                    // 나머지 팀 플레이어들에게 전송
                     for (const pid of teamPlayers) {
+                        // 메시지 보낸 사람은 이미 전송했으므로 제외
+                        if (pid === playerId)
+                            continue;
                         const player = room.players[pid];
                         if (player && player.isOnline && player.socketId) {
                             // 개별 소켓에 직접 메시지 전송
@@ -1003,17 +1110,24 @@ io.on('connection', (socket) => {
                 }
             }
             else if (type === 'diplomacy' && target) {
-                // 외교 채팅: 보낸 팀과 받는 팀에게만
+                // 외교 채팅: 보낸 팀과 받는 팀에게만 (메시지 보낸 사람 포함)
                 const room = gameManager.getRoom(roomId);
                 if (room) {
+                    // 메시지를 보낸 플레이어에게 먼저 전송
+                    socket.emit('chatMessage', chatMessage);
+                    console.log(`[Socket] Sent diplomacy chat to sender: ${socket.data.playerId}`);
                     const senderTeamPlayers = room.teams[chatMessage.team].players;
                     const targetTeamPlayers = room.teams[target].players;
                     for (const pid of [...senderTeamPlayers, ...targetTeamPlayers]) {
+                        // 메시지 보낸 사람은 이미 전송했으므로 제외
+                        if (pid === playerId)
+                            continue;
                         const player = room.players[pid];
                         if (player && player.isOnline && player.socketId) {
                             // 개별 소켓에 직접 메시지 전송
                             const targetSocket = io.sockets.sockets.get(player.socketId);
                             if (targetSocket) {
+                                console.log(`[Socket] Sending diplomacy chat to ${player.name}`);
                                 targetSocket.emit('chatMessage', chatMessage);
                             }
                             else {
@@ -1024,8 +1138,9 @@ io.on('connection', (socket) => {
                 }
             }
             else {
-                // 공개 채팅
+                // 공개 채팅: 모든 플레이어에게 (방 전체)
                 io.to(roomId).emit('chatMessage', chatMessage);
+                console.log(`[Socket] Sent public chat to room: ${roomId}`);
             }
         }
     });

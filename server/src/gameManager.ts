@@ -15,6 +15,9 @@ import {
   Vote,
   ChatMessage,
   EventHistory,
+  VictoryType,
+  VictoryProgress,
+  VICTORY_CONDITIONS,
 } from './types.js';
 
 // 기본 게임 설정
@@ -37,6 +40,9 @@ const INITIAL_STATS: Record<Nation, NationStats> = {
     gold: 1000,
     population: 80000,
     morale: 70,
+    culturePoints: 0,
+    techProgress: 0,
+    peaceTurns: 0,
   },
   baekje: {
     military: 100,
@@ -46,6 +52,9 @@ const INITIAL_STATS: Record<Nation, NationStats> = {
     gold: 1200,
     population: 60000,
     morale: 75,
+    culturePoints: 0,
+    techProgress: 0,
+    peaceTurns: 0,
   },
   silla: {
     military: 90,
@@ -55,7 +64,19 @@ const INITIAL_STATS: Record<Nation, NationStats> = {
     gold: 800,
     population: 50000,
     morale: 80,
+    culturePoints: 0,
+    techProgress: 0,
+    peaceTurns: 0,
   },
+};
+
+// 초기 승리 진행 상황
+const INITIAL_VICTORY_PROGRESS: VictoryProgress = {
+  military: { conqueredNations: [], progress: 0 },
+  cultural: { culturePoints: 0, progress: 0 },
+  diplomatic: { alliances: 0, peaceTurns: 0, progress: 0 },
+  technological: { completedTechs: [], progress: 0 },
+  score: { totalScore: 0, progress: 0 },
 };
 
 // 연도 계산 (턴 당 10년)
@@ -108,6 +129,8 @@ export class GameManager {
           allies: [],
           enemies: [],
           eventHistory: [],
+          isEliminated: false,
+          victoryProgress: { ...INITIAL_VICTORY_PROGRESS },
         },
         baekje: {
           nation: 'baekje',
@@ -116,6 +139,8 @@ export class GameManager {
           allies: [],
           enemies: [],
           eventHistory: [],
+          isEliminated: false,
+          victoryProgress: { ...INITIAL_VICTORY_PROGRESS },
         },
         silla: {
           nation: 'silla',
@@ -124,6 +149,8 @@ export class GameManager {
           allies: [],
           enemies: [],
           eventHistory: [],
+          isEliminated: false,
+          victoryProgress: { ...INITIAL_VICTORY_PROGRESS },
         },
       },
       players: {},
@@ -134,6 +161,8 @@ export class GameManager {
         silla: { eventId: '', votes: {}, deadline: 0 },
       },
       chatMessages: [], // 채팅 메시지 저장 (교사용 대시보드용)
+      isSinglePlayerAI: hostName === '싱글플레이어 AI 대전', // 싱글플레이 AI 대전 여부
+      victoryConditions: [...VICTORY_CONDITIONS], // 모든 승리 조건 활성화
       createdAt: Date.now(),
     };
 
@@ -221,13 +250,14 @@ export class GameManager {
 
     // 방장이 나간 경우 처리
     if (room.hostId === playerId) {
-      const onlinePlayers = Object.values(room.players).filter(p => p.isOnline);
+      // AI가 아닌 온라인 플레이어만 호스트 후보로 선택
+      const onlinePlayers = Object.values(room.players).filter(p => p.isOnline && !p.isAI);
       if (onlinePlayers.length > 0) {
         room.hostId = onlinePlayers[0].id;
         room.hostName = onlinePlayers[0].name;
         console.log(`[GameManager] New host: ${room.hostName}`);
       } else {
-        // 방 삭제
+        // 방 삭제 (AI만 남은 경우)
         this.rooms.delete(roomId);
         this.codeToRoomId.delete(room.code);
         console.log(`[GameManager] Room deleted: ${room.code}`);
@@ -847,6 +877,189 @@ export class GameManager {
     }
 
     return true;
+  }
+
+  // ============================================
+  // 승리 조건 시스템
+  // ============================================
+
+  // 승리 진행 상황 업데이트
+  updateVictoryProgress(roomId: string, nation: Nation): VictoryProgress | null {
+    const room = this.rooms.get(roomId);
+    if (!room) return null;
+
+    const team = room.teams[nation];
+    const stats = team.stats;
+    const progress = team.victoryProgress;
+
+    // 군사 승리 진행 상황
+    const conqueredNations = (['goguryeo', 'baekje', 'silla'] as Nation[])
+      .filter(n => n !== nation && room.teams[n].isEliminated && room.teams[n].conqueredBy === nation);
+    progress.military = {
+      conqueredNations,
+      progress: Math.min(100, (conqueredNations.length / 2) * 100),
+    };
+
+    // 문화 승리 진행 상황
+    progress.cultural = {
+      culturePoints: stats.culturePoints,
+      progress: Math.min(100, (stats.culturePoints / 500) * 100),
+    };
+
+    // 외교 승리 진행 상황
+    const alliances = team.allies.length;
+    const peaceTurns = stats.peaceTurns;
+    const diplomaticProgress = Math.min(100, ((alliances / 2) * 50) + ((peaceTurns / 10) * 50));
+    progress.diplomatic = {
+      alliances,
+      peaceTurns,
+      progress: diplomaticProgress,
+    };
+
+    // 기술 승리 진행 상황 (추후 테크 트리 구현 시 업데이트)
+    progress.technological = {
+      completedTechs: [],
+      progress: Math.min(100, (stats.techProgress / 8) * 100),
+    };
+
+    // 점수 승리 진행 상황
+    const totalScore = this.calculateTotalScore(stats);
+    progress.score = {
+      totalScore,
+      progress: room.currentTurn >= 30 ? 100 : (room.currentTurn / 30) * 100,
+    };
+
+    return progress;
+  }
+
+  // 총점 계산
+  calculateTotalScore(stats: NationStats): number {
+    return Math.floor(
+      stats.military * 1.5 +
+      stats.economy * 1.2 +
+      stats.culture * 1.3 +
+      stats.diplomacy * 1.0 +
+      stats.gold * 0.01 +
+      stats.population * 0.001 +
+      stats.culturePoints * 2 +
+      stats.morale * 0.5
+    );
+  }
+
+  // 승리 조건 체크
+  checkVictoryConditions(roomId: string): { winner: Nation; victoryType: VictoryType; victoryName: string } | null {
+    const room = this.rooms.get(roomId);
+    if (!room || room.status === 'finished') return null;
+
+    const nations: Nation[] = ['goguryeo', 'baekje', 'silla'];
+    
+    for (const nation of nations) {
+      const team = room.teams[nation];
+      if (team.isEliminated) continue;
+
+      // 승리 진행 상황 업데이트
+      const progress = this.updateVictoryProgress(roomId, nation);
+      if (!progress) continue;
+
+      // 1. 군사 승리 체크 - 다른 두 국가 정복
+      if (progress.military.conqueredNations.length >= 2) {
+        return { winner: nation, victoryType: 'military', victoryName: '삼국통일' };
+      }
+
+      // 2. 문화 승리 체크 - 문화 점수 500점
+      if (progress.cultural.culturePoints >= 500) {
+        return { winner: nation, victoryType: 'cultural', victoryName: '문화대국' };
+      }
+
+      // 3. 외교 승리 체크 - 2국 동맹 + 10턴 평화
+      if (team.allies.length >= 2 && team.stats.peaceTurns >= 10) {
+        return { winner: nation, victoryType: 'diplomatic', victoryName: '평화의 시대' };
+      }
+
+      // 4. 기술 승리 체크 - 8개 기술 완료 (추후 테크 트리 구현 시)
+      if (team.stats.techProgress >= 8) {
+        return { winner: nation, victoryType: 'technological', victoryName: '기술 선진국' };
+      }
+    }
+
+    // 5. 점수 승리 체크 - 30턴 후 최고 점수
+    if (room.currentTurn >= room.settings.maxTurns) {
+      let highestScore = 0;
+      let winner: Nation = 'goguryeo';
+      
+      for (const nation of nations) {
+        if (room.teams[nation].isEliminated) continue;
+        const score = this.calculateTotalScore(room.teams[nation].stats);
+        if (score > highestScore) {
+          highestScore = score;
+          winner = nation;
+        }
+      }
+      
+      return { winner, victoryType: 'score', victoryName: '최강국' };
+    }
+
+    return null;
+  }
+
+  // 국가 탈락 처리
+  eliminateNation(roomId: string, nation: Nation, conqueror: Nation): boolean {
+    const room = this.rooms.get(roomId);
+    if (!room) return false;
+
+    const team = room.teams[nation];
+    team.isEliminated = true;
+    team.conqueredBy = conqueror;
+
+    console.log(`[GameManager] Nation ${nation} eliminated by ${conqueror} in room ${room.code}`);
+    return true;
+  }
+
+  // 평화 턴 업데이트 (매 턴마다 호출)
+  updatePeaceTurns(roomId: string): void {
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+
+    const nations: Nation[] = ['goguryeo', 'baekje', 'silla'];
+    
+    for (const nation of nations) {
+      const team = room.teams[nation];
+      if (team.isEliminated) continue;
+
+      // 적이 없으면 평화 턴 증가
+      if (team.enemies.length === 0) {
+        team.stats.peaceTurns += 1;
+      } else {
+        team.stats.peaceTurns = 0; // 전쟁 중이면 리셋
+      }
+    }
+  }
+
+  // 문화 점수 추가 (이벤트 선택, 건물 건설 등에서 호출)
+  addCulturePoints(roomId: string, nation: Nation, points: number): void {
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+
+    const team = room.teams[nation];
+    if (team.isEliminated) return;
+
+    team.stats.culturePoints += points;
+    console.log(`[GameManager] ${nation} gained ${points} culture points (total: ${team.stats.culturePoints})`);
+  }
+
+  // 승리 처리
+  handleVictory(roomId: string, winner: Nation, victoryType: VictoryType): void {
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+
+    room.status = 'finished';
+    room.winner = {
+      nation: winner,
+      victoryType,
+      turn: room.currentTurn,
+    };
+
+    console.log(`[GameManager] Game ended! Winner: ${winner} by ${victoryType} victory at turn ${room.currentTurn}`);
   }
 
   // 디버그: 모든 방 정보
